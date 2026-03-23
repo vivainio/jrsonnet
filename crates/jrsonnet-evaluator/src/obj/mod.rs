@@ -239,7 +239,6 @@ cc_dyn!(
 struct ObjValueInner {
 	cores: Vec<CcObjectCore>,
 	assertions_ran: Cell<bool>,
-	#[trace(skip)]
 	has_assertions: bool,
 	value_cache: RefCell<FxHashMap<(IStr, CoreIdx), CacheValue>>,
 }
