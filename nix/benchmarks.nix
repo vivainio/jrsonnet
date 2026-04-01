@@ -81,7 +81,7 @@ stdenv.mkDerivation {
         }:
         ''
           echo >> $out
-          echo "### ${name}" >> $out
+          echo "=== ${name}" >> $out
           echo >> $out
           ${optionalString (skipRustAlternative != "") ''
             echo "> Note: No results for Rust (alternative), ${skipRustAlternative}" >> $out
@@ -92,7 +92,7 @@ stdenv.mkDerivation {
             echo >> $out
           ''}
           ${optionalString (skipScala != "") ''
-            echo "> Note: No results for Scala/Scala (native)/Scala (GraalVM), ${skipScala}" >> $out
+            echo "> Note: No results for Scala (native)/Scala (GraalVM), ${skipScala}" >> $out
             echo >> $out
           ''}
           ${optionalString (skipCpp != "") ''
@@ -100,15 +100,16 @@ stdenv.mkDerivation {
             echo >> $out
           ''}
           ${optionalString (!quick && !omitSource) ''
-            echo "<details>" >> $out
-            echo "<summary>Source</summary>" >> $out
-            echo >> $out
-            echo "\`\`\`jsonnet" >> $out
+            echo ".Source" >> $out
+            echo "[%collapsible]" >> $out
+            echo "====" >> $out
+            echo "[source,jsonnet]" >> $out
+            echo "----" >> $out
             ${optionalString pathIsGenerator "echo \"// Generator source\" >> $out"}
             cat ${path} >> $out
             echo >> $out
-            echo "\`\`\`" >> $out
-            echo "</details>" >> $out
+            echo "----" >> $out
+            echo "====" >> $out
             echo >> $out
           ''}
           path=${path}
@@ -139,10 +140,6 @@ stdenv.mkDerivation {
             } \
             ${
               optionalString (skipScala == "")
-                "\"sjsonnet $path${optionalString (vendor != "") " -J ${vendor}"}\" -n \"Scala\""
-            } \
-            ${
-              optionalString (skipScala == "")
                 "\"sjsonnet-native $path${optionalString (vendor != "") " -J ${vendor}"}\" -n \"Scala (native)\""
             } \
             ${
@@ -157,60 +154,33 @@ stdenv.mkDerivation {
     in
     ''
       set -oux
+      ulimit -s unlimited
 
       temp=$(mktemp -d)
       cd $temp
 
       touch $out
       ${optionalString (!quick) ''
-        cat ${./benchmarks.md} >> $out
+        cat ${./benchmarks.adoc} >> $out
         echo >> $out
 
-        echo "<details>" >> $out
-        echo "<summary>Tested versions</summary>" >> $out
-        echo >> $out
-        echo Go: $(go-jsonnet --version) >> $out
-        echo >> $out
-        echo "\`\`\`" >> $out
-        go-jsonnet --help >> $out
-        echo "\`\`\`" >> $out
-        echo >> $out
-        echo C++: $(jsonnet --version) >> $out
-        echo >> $out
-        echo "\`\`\`" >> $out
-        jsonnet --help >> $out
-        echo "\`\`\`" >> $out
-        echo >> $out
-        echo Scala: >> $out
-        echo >> $out
-        echo "\`\`\`" >> $out
-        sjsonnet 2>> $out || true
-        echo "\`\`\`" >> $out
-        echo >> $out
-        echo "Scala (native):" >> $out
-        echo >> $out
-        echo "\`\`\`" >> $out
-        sjsonnet-native 2>> $out || true
-        echo "\`\`\`" >> $out
-        echo >> $out
-        echo "Scala (GraalVM):" >> $out
-        echo >> $out
-        echo "\`\`\`" >> $out
-        sjsonnet-graalvm 2>> $out || true
-        echo "\`\`\`" >> $out
-        echo >> $out
-        echo "Rust (alternative):" >> $out
-        echo >> $out
-        echo "\`\`\`" >> $out
-        rsjsonnet --help 2>> $out || true
-        echo "\`\`\`" >> $out
-        echo >> $out
-        echo "</details>" >> $out
+        echo "CPU: $(grep 'model name' /proc/cpuinfo | head -1 | cut -d: -f2 | xargs), $(grep -c '^processor' /proc/cpuinfo) threads" >> $out
         echo >> $out
 
+        echo ".Tested versions" >> $out
+        echo "[%collapsible]" >> $out
+        echo "====" >> $out
+        echo "* Go: $(go-jsonnet --version)" >> $out
+        echo "* C++: $(jsonnet --version)" >> $out
+        echo "* Scala (native/GraalVM): $(sjsonnet-native 2>&1 | grep -oP 'Sjsonnet \S+')" >> $out
+        echo "* Rust (alternative): rsjsonnet ${rsjsonnet.version} (${rsjsonnet.src.rev})" >> $out
+        ${concatStringsSep "\n" (forEach jrsonnetVariants (variant:
+          "echo \"* Rust${if variant.name != "" then " (${variant.name})" else ""}: $(${variant.drv}/bin/jrsonnet --version 2>&1)\" >> $out"
+        ))}
+        echo "====" >> $out
         echo >> $out
       ''}
-      echo "## Real world" >> $out
+      echo "== Real world" >> $out
       ${mkBench {
         name = "Graalvm CI";
         path = "${graalvmBench}/ci.jsonnet";
@@ -230,7 +200,7 @@ stdenv.mkDerivation {
       }}
 
       echo >> $out
-      echo "## Benchmarks from C++ jsonnet (/perf_tests)" >> $out
+      echo "== Benchmarks from C++ jsonnet (/perf_tests)" >> $out
       ${mkBench {
         name = "Large string join";
         path = "${jsonnetBench}/perf_tests/large_string_join.jsonnet";
@@ -260,7 +230,7 @@ stdenv.mkDerivation {
       }}
 
       echo >> $out
-      echo "## Benchmarks from C++ jsonnet (/benchmarks)" >> $out
+      echo "== Benchmarks from C++ jsonnet (/benchmarks)" >> $out
       ${mkBench {
         name = "Tail call";
         path = "${jsonnetBench}/benchmarks/bench.01.jsonnet";
@@ -293,7 +263,6 @@ stdenv.mkDerivation {
         name = "Lazy array";
         path = "${jsonnetBench}/benchmarks/bench.07.jsonnet";
         skipGo = skipSlow;
-        skipScala = skipSlow;
       }}
       ${mkBench {
         name = "Inheritance function recursion";
@@ -315,7 +284,7 @@ stdenv.mkDerivation {
       }}
 
       echo >> $out
-      echo "## Benchmarks from Go jsonnet (builtins)" >> $out
+      echo "== Benchmarks from Go jsonnet (builtins)" >> $out
       ${mkBench {
         name = "std.base64";
         path = "${goJsonnetBench}/base64.jsonnet";

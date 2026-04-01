@@ -1,6 +1,6 @@
-# Benchmarks
+= Benchmarks
 
-There are multiple implementations of jsonnet implemented in different languages: Rust (this repo), [Go](https://github.com/google/go-jsonnet/), [Scala](https://github.com/databricks/sjsonnet), [C++](https://github.com/google/jsonnet), [Haskell](https://github.com/moleike/haskell-jsonnet).
+There are multiple implementations of jsonnet implemented in different languages: Rust (this repo), https://github.com/google/go-jsonnet/[Go], https://github.com/databricks/sjsonnet[Scala], https://github.com/google/jsonnet[C++], https://github.com/moleike/haskell-jsonnet[Haskell].
 
 For simplicity, I will call these implementations by the language of their implementation.
 

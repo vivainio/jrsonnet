@@ -22,6 +22,6 @@ with lib;
 
     # To clean-up hyperfine output
     postInstall = optionalString forBenchmarks ''
-      wrapProgram $out/bin/jrsonnet --add-flags "--max-stack=200000 --os-stack=200000"
+      wrapProgram $out/bin/jrsonnet --add-flags "--max-stack=200000"
     '';
   }

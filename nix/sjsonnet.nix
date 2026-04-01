@@ -60,7 +60,7 @@ stdenv.mkDerivation {
   installPhase = ''
     mkdir -p $out/bin $out/lib
     cp $src $out/lib/sjsonnet.jar
-    makeWrapper ${java}/bin/java $out/bin/sjsonnet --add-flags "-Xss100m -XX:+UseStringDeduplication -jar $out/lib/sjsonnet.jar"
+    makeWrapper ${java}/bin/java $out/bin/sjsonnet --add-flags "-Xss100m -XX:+UseStringDeduplication -jar $out/lib/sjsonnet.jar --max-stack 200000"
 
     cp ${nativeSrc} $out/bin/sjsonnet-native
     chmod +x $out/bin/sjsonnet-native
