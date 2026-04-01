@@ -8,20 +8,20 @@ authors = ["Yaroslav Bolyukin <iam@lach.pw>"]
 edition = "2021"
 license = "MIT"
 repository = "https://github.com/CertainLach/jrsonnet"
-version = "0.5.0-pre97"
+version = "0.5.0-pre98"
 
 [workspace.dependencies]
-jrsonnet-evaluator = { path = "./crates/jrsonnet-evaluator", version = "0.5.0-pre97" }
-jrsonnet-macros = { path = "./crates/jrsonnet-macros", version = "0.5.0-pre97" }
-jrsonnet-ir = { path = "./crates/jrsonnet-ir", version = "0.5.0-pre97" }
-jrsonnet-ir-parser = { path = "./crates/jrsonnet-ir-parser", version = "0.5.0-pre97" }
-jrsonnet-peg-parser = { path = "./crates/jrsonnet-peg-parser", version = "0.5.0-pre97" }
-jrsonnet-rowan-parser = { path = "./crates/jrsonnet-rowan-parser", version = "0.5.0-pre97" }
-jrsonnet-interner = { path = "./crates/jrsonnet-interner", version = "0.5.0-pre97" }
-jrsonnet-stdlib = { path = "./crates/jrsonnet-stdlib", version = "0.5.0-pre97" }
-jrsonnet-cli = { path = "./crates/jrsonnet-cli", version = "0.5.0-pre97" }
-jrsonnet-types = { path = "./crates/jrsonnet-types", version = "0.5.0-pre97" }
-jrsonnet-formatter = { path = "./crates/jrsonnet-formatter", version = "0.5.0-pre97" }
+jrsonnet-evaluator = { path = "./crates/jrsonnet-evaluator", version = "0.5.0-pre98" }
+jrsonnet-macros = { path = "./crates/jrsonnet-macros", version = "0.5.0-pre98" }
+jrsonnet-ir = { path = "./crates/jrsonnet-ir", version = "0.5.0-pre98" }
+jrsonnet-ir-parser = { path = "./crates/jrsonnet-ir-parser", version = "0.5.0-pre98" }
+jrsonnet-peg-parser = { path = "./crates/jrsonnet-peg-parser", version = "0.5.0-pre98" }
+jrsonnet-rowan-parser = { path = "./crates/jrsonnet-rowan-parser", version = "0.5.0-pre98" }
+jrsonnet-interner = { path = "./crates/jrsonnet-interner", version = "0.5.0-pre98" }
+jrsonnet-stdlib = { path = "./crates/jrsonnet-stdlib", version = "0.5.0-pre98" }
+jrsonnet-cli = { path = "./crates/jrsonnet-cli", version = "0.5.0-pre98" }
+jrsonnet-types = { path = "./crates/jrsonnet-types", version = "0.5.0-pre98" }
+jrsonnet-formatter = { path = "./crates/jrsonnet-formatter", version = "0.5.0-pre98" }
 jrsonnet-gcmodule = { version = "0.4.2" }
 # Diagnostics.
 # hi-doc is my library, which handles text formatting very well, but isn't polished enough yet

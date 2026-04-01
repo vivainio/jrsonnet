@@ -53,7 +53,7 @@ let
 in
 stdenv.mkDerivation {
   name = "benchmarks";
-  __impure = true;
+  # __impure = true; # not supported by hercules-ci
   unpackPhase = "true";
 
   buildInputs = [
@@ -143,7 +143,9 @@ stdenv.mkDerivation {
                 "\"sjsonnet-native $path${optionalString (vendor != "") " -J ${vendor}"}\" -n \"Scala (native)\""
             } \
             ${
-              optionalString (skipScala == "")
+              # My aarch64-linux machine can't run graalvm image:
+              # The current machine does not support all of the following CPU features that are required by the image: [FP, ASIMD, CRC32, LSE].
+              optionalString (skipScala == "" && stdenv.hostPlatform.system != "aarch64-linux")
                 "\"sjsonnet-graalvm $path${optionalString (vendor != "") " -J ${vendor}"}\" -n \"Scala (GraalVM)\""
             } \
             ${optionalString (skipCpp == "")
@@ -174,9 +176,14 @@ stdenv.mkDerivation {
         echo "* C++: $(jsonnet --version)" >> $out
         echo "* Scala (native/GraalVM): $(sjsonnet-native 2>&1 | grep -oP 'Sjsonnet \S+')" >> $out
         echo "* Rust (alternative): rsjsonnet ${rsjsonnet.version} (${rsjsonnet.src.rev})" >> $out
-        ${concatStringsSep "\n" (forEach jrsonnetVariants (variant:
-          "echo \"* Rust${if variant.name != "" then " (${variant.name})" else ""}: $(${variant.drv}/bin/jrsonnet --version 2>&1)\" >> $out"
-        ))}
+        ${concatStringsSep "\n" (
+          forEach jrsonnetVariants (
+            variant:
+            "echo \"* Rust${
+              if variant.name != "" then " (${variant.name})" else ""
+            }: $(${variant.drv}/bin/jrsonnet --version 2>&1)\" >> $out"
+          )
+        )}
         echo "====" >> $out
         echo >> $out
       ''}
