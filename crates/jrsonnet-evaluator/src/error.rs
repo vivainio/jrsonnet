@@ -15,14 +15,9 @@ use crate::{
 };
 
 #[derive(Debug, Clone)]
-pub struct SyntaxErrorLocation {
-	pub offset: usize,
-}
-
-#[derive(Debug, Clone)]
 pub struct SyntaxError {
 	pub message: String,
-	pub location: SyntaxErrorLocation,
+	pub location: (u32, u32),
 }
 impl fmt::Display for SyntaxError {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

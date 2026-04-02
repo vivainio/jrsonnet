@@ -7,21 +7,16 @@ use jrsonnet_ir::{
 	ImportKind, IndexPart, LiteralType, Member, ObjBody, ObjComp, ObjMembers, Slice, SliceDesc,
 	Source, Span, Spanned, UnaryOpType, Visibility, unescape,
 };
-use jrsonnet_lexer::{Lexeme, Lexer, SyntaxKind, T, collect_lexed_str_block};
+use jrsonnet_lexer::{Lexeme, Lexer, Span as LexSpan, SyntaxKind, T, collect_lexed_str_block};
 
 pub struct ParserSettings {
 	pub source: Source,
 }
 
 #[derive(Debug, Clone)]
-pub struct ParseErrorLocation {
-	pub offset: usize,
-}
-
-#[derive(Debug, Clone)]
 pub struct ParseError {
 	pub message: String,
-	pub location: ParseErrorLocation,
+	pub location: LexSpan,
 }
 
 impl std::fmt::Display for ParseError {
@@ -131,9 +126,7 @@ impl<'a> Parser<'a> {
 
 	fn error(&self, message: String) -> ParseError {
 		ParseError {
-			location: ParseErrorLocation {
-				offset: self.span_start() as usize,
-			},
+			location: self.lexemes[self.offset].range,
 			message,
 		}
 	}
@@ -143,9 +136,6 @@ impl<'a> Parser<'a> {
 			return Err(self.error(format!("expected identifier, got {}", self.current_desc())));
 		}
 		let text = self.text();
-		if is_reserved(text) {
-			return Err(self.error(format!("expected identifier, got reserved word '{text}'")));
-		}
 		let s: IStr = text.into();
 		self.eat_any();
 		Ok(s)
@@ -154,23 +144,6 @@ impl<'a> Parser<'a> {
 	fn at_ident(&self) -> bool {
 		self.at(SyntaxKind::IDENT) && !is_reserved(self.lexemes[self.offset].text)
 	}
-}
-
-fn is_reserved(s: &str) -> bool {
-	matches!(
-		s,
-		"assert"
-			| "else" | "error"
-			| "false" | "for"
-			| "function"
-			| "if" | "import"
-			| "importstr"
-			| "importbin"
-			| "in" | "local"
-			| "null" | "tailstrict"
-			| "then" | "self"
-			| "super" | "true"
-	)
 }
 
 fn spanned<T: Acyclic>(
@@ -1040,9 +1013,7 @@ pub fn parse(str: &str, settings: &ParserSettings) -> Result<Expr> {
 		if let Some(desc) = lexeme.kind.error_description() {
 			return Err(ParseError {
 				message: desc.to_owned(),
-				location: ParseErrorLocation {
-					offset: lexeme.range.0 as usize,
-				},
+				location: lexeme.range,
 			});
 		}
 	}

@@ -50,7 +50,7 @@ pub use jrsonnet_macros;
 #[cfg(not(any(feature = "ir-parser", feature = "peg-parser")))]
 compile_error!("at least one of `ir-parser` or `peg-parser` features must be enabled");
 
-pub use error::{SyntaxError, SyntaxErrorLocation};
+pub use error::SyntaxError;
 pub use obj::*;
 pub use rustc_hash;
 use rustc_hash::FxHashMap;
@@ -87,9 +87,7 @@ fn parse_ir(code: &str, source: Source) -> Result<Expr, SyntaxError> {
 	jrsonnet_ir_parser::parse(code, &jrsonnet_ir_parser::ParserSettings { source }).map_err(|e| {
 		SyntaxError {
 			message: e.message,
-			location: SyntaxErrorLocation {
-				offset: e.location.offset,
-			},
+			location: (e.location.0, e.location.1),
 		}
 	})
 }
@@ -107,7 +105,7 @@ fn parse_peg(code: &str, source: Source) -> Result<Expr, SyntaxError> {
 						"expected {}, got {:?}",
 						e.expected,
 						code.chars()
-							.nth(e.location.offset)
+							.nth(e.location.0)
 							.map_or_else(|| "EOF".into(), |c: char| c.to_string())
 					)
 				},
@@ -115,9 +113,7 @@ fn parse_peg(code: &str, source: Source) -> Result<Expr, SyntaxError> {
 			);
 		SyntaxError {
 			message,
-			location: SyntaxErrorLocation {
-				offset: e.location.offset,
-			},
+			location: e.location,
 		}
 	})
 }

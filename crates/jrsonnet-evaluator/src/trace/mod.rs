@@ -122,7 +122,7 @@ impl TraceFormat for CompactFormat {
 				|| path.source_path().to_string(),
 				|r| self.resolver.resolve(r),
 			);
-			let mut offset = error.location.offset;
+			let mut offset = error.location.0 as usize;
 			let is_eof = if offset >= path.code().len() {
 				offset = path.code().len().saturating_sub(1);
 				true
@@ -263,11 +263,15 @@ impl TraceFormat for HiDocFormat {
 		write!(out, "{}", error.error())?;
 		if let ErrorKind::ImportSyntaxError { path, error } = error.error() {
 			writeln!(out)?;
-			let offset = error.location.offset;
+			let mut offset = error.location;
+			// To inclusive range
+			if offset.1 > offset.0 {
+				offset.1 -= 1;
+			}
 			let mut builder = SnippetBuilder::new(path.code());
 			builder
 				.error(Text::fragment("syntax error", Formatting::default()))
-				.range(offset..=offset)
+				.range(offset.0 as usize..=offset.1 as usize)
 				.build();
 			let source = builder.build();
 			let ansi = source_to_ansi(&source);
