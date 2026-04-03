@@ -130,20 +130,6 @@ impl<'a> Parser<'a> {
 			message,
 		}
 	}
-
-	fn expect_ident(&mut self) -> Result<IStr> {
-		if !self.at(SyntaxKind::IDENT) {
-			return Err(self.error(format!("expected identifier, got {}", self.current_desc())));
-		}
-		let text = self.text();
-		let s: IStr = text.into();
-		self.eat_any();
-		Ok(s)
-	}
-
-	fn at_ident(&self) -> bool {
-		self.at(SyntaxKind::IDENT) && !is_reserved(self.lexemes[self.offset].text)
-	}
 }
 
 fn spanned<T: Acyclic>(
@@ -222,6 +208,12 @@ fn parse_number(p: &mut Parser<'_>) -> Result<f64> {
 	Ok(n)
 }
 
+fn ident(p: &mut Parser<'_>) -> Result<IStr> {
+	let text = p.text();
+	p.eat(SyntaxKind::IDENT)?;
+	Ok(IStr::from(text))
+}
+
 fn literal(p: &mut Parser<'_>) -> Option<LiteralType> {
 	let t = match p.peek() {
 		T![self] => LiteralType::This,
@@ -289,8 +281,8 @@ fn slice_desc(p: &mut Parser<'_>, start: Option<Spanned<Expr>>) -> Result<SliceD
 }
 
 fn destruct(p: &mut Parser<'_>) -> Result<Destruct> {
-	if p.at_ident() {
-		return Ok(Destruct::Full(p.expect_ident()?));
+	if p.at(SyntaxKind::IDENT) {
+		return Ok(Destruct::Full(ident(p)?));
 	}
 	#[cfg(not(feature = "exp-destruct"))]
 	return Err(p.error(format!("expected identifier, got {}", p.current_desc())));
@@ -315,8 +307,8 @@ fn destruct(p: &mut Parser<'_>) -> Result<Destruct> {
 #[cfg(feature = "exp-destruct")]
 fn destruct_rest(p: &mut Parser<'_>) -> Result<jrsonnet_ir::DestructRest> {
 	p.eat(T![...])?;
-	if p.at_ident() {
-		Ok(jrsonnet_ir::DestructRest::Keep(p.expect_ident()?))
+	if p.at(SyntaxKind::IDENT) {
+		Ok(jrsonnet_ir::DestructRest::Keep(ident(p)?))
 	} else {
 		Ok(jrsonnet_ir::DestructRest::Drop)
 	}
@@ -372,7 +364,7 @@ fn destruct_object(p: &mut Parser<'_>) -> Result<Destruct> {
 				p.try_eat(T![,]);
 				break;
 			}
-			let name = p.expect_ident()?;
+			let name = ident(p)?;
 			let into = if p.try_eat(T![:]) {
 				Some(destruct(p)?)
 			} else {
@@ -430,15 +422,12 @@ fn args(p: &mut Parser<'_>) -> Result<ArgsDesc> {
 	let mut named = Vec::new();
 	let mut named_started = false;
 	loop {
-		let is_named = p.at_ident() && {
+		let is_named = p.at(SyntaxKind::IDENT) && {
 			let next_offset = p.offset + 1;
-			next_offset < p.lexemes.len() && p.lexemes[next_offset].kind == T![=] && {
-				let after_eq = next_offset + 1;
-				after_eq >= p.lexemes.len() || p.lexemes[after_eq].kind != T![=]
-			}
+			next_offset < p.lexemes.len() && p.lexemes[next_offset].kind == T![=]
 		};
 		if is_named {
-			let name: IStr = p.expect_ident()?;
+			let name: IStr = ident(p)?;
 			p.eat(T![=])?;
 			let value = Rc::new(expr(p)?);
 			named.push((name, value));
@@ -462,14 +451,14 @@ fn args(p: &mut Parser<'_>) -> Result<ArgsDesc> {
 fn bind(p: &mut Parser<'_>) -> Result<BindSpec> {
 	#[cfg(feature = "exp-destruct")]
 	{
-		if !p.at_ident() {
+		if !p.at(SyntaxKind::IDENT) {
 			let d = destruct(p)?;
 			p.eat(T![=])?;
 			let value = Rc::new(expr(p)?);
 			return Ok(BindSpec::Field { into: d, value });
 		}
 	}
-	let name = p.expect_ident()?;
+	let name = ident(p)?;
 	if p.try_eat(T!['(']) {
 		let ps = params(p)?;
 		p.eat(T![')'])?;
@@ -504,8 +493,8 @@ fn visibility(p: &mut Parser<'_>) -> Result<Visibility> {
 }
 
 fn field_name(p: &mut Parser<'_>) -> Result<FieldName> {
-	if p.at_ident() {
-		Ok(FieldName::Fixed(p.expect_ident()?))
+	if p.at(SyntaxKind::IDENT) {
+		Ok(FieldName::Fixed(ident(p)?))
 	} else if is_string_token(p.peek()) {
 		Ok(FieldName::Fixed(parse_string_content(p)?))
 	} else if p.at(T!['[']) {
@@ -776,9 +765,6 @@ fn expr_basic(p: &mut Parser<'_>) -> Result<Expr> {
 
 		SyntaxKind::IDENT => {
 			let text = p.text();
-			if is_reserved(text) {
-				return Err(p.error(format!("unexpected reserved word '{text}'")));
-			}
 			let n = spanned(p, |p| {
 				let s: IStr = p.text().into();
 				p.eat_any();
@@ -826,10 +812,7 @@ fn expr_suffix(p: &mut Parser<'_>) -> Result<Expr> {
 					});
 				} else {
 					// ?.field
-					let id_spanned = spanned(p, |p| {
-						let name = p.expect_ident()?;
-						Ok(Expr::Str(name))
-					})?;
+					let id_spanned = spanned(p, |p| Ok(Expr::Str(ident(p)?)))?;
 					parts.push(IndexPart {
 						span: id_spanned.span,
 						value: id_spanned.value,
@@ -844,10 +827,7 @@ fn expr_suffix(p: &mut Parser<'_>) -> Result<Expr> {
 
 		if p.at(T![.]) {
 			p.eat(T![.])?;
-			let id_spanned = spanned(p, |p| {
-				let name = p.expect_ident()?;
-				Ok(Expr::Str(name))
-			})?;
+			let id_spanned = spanned(p, |p| Ok(Expr::Str(ident(p)?)))?;
 			parts.push(IndexPart {
 				span: id_spanned.span,
 				value: id_spanned.value,
