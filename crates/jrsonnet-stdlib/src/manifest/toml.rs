@@ -26,30 +26,27 @@ pub struct TomlFormat<'s> {
 	skip_empty_sections: bool,
 	/// If true - then order of fields is preserved as written,
 	/// instead of sorting alphabetically
-	#[cfg(feature = "exp-preserve-order")]
 	preserve_order: bool,
 }
 impl TomlFormat<'_> {
 	pub fn cli(
 		padding: usize,
-		#[cfg(feature = "exp-preserve-order")] preserve_order: bool,
+		preserve_order: bool,
 	) -> Self {
 		let padding = " ".repeat(padding);
 		Self {
 			padding: Cow::Owned(padding),
 			skip_empty_sections: true,
-			#[cfg(feature = "exp-preserve-order")]
 			preserve_order,
 		}
 	}
 	pub fn std_to_toml(
 		padding: String,
-		#[cfg(feature = "exp-preserve-order")] preserve_order: bool,
+		preserve_order: bool,
 	) -> Self {
 		Self {
 			padding: Cow::Owned(padding),
 			skip_empty_sections: false,
-			#[cfg(feature = "exp-preserve-order")]
 			preserve_order,
 		}
 	}
@@ -145,7 +142,6 @@ fn manifest_value(
 			let mut had_fields = false;
 			for (i, (k, v)) in o
 				.iter(
-					#[cfg(feature = "exp-preserve-order")]
 					options.preserve_order,
 				)
 				.enumerate()
@@ -192,7 +188,6 @@ fn manifest_table_internal(
 	let mut sections = Vec::new();
 	let mut first = true;
 	for (key, value) in obj.iter(
-		#[cfg(feature = "exp-preserve-order")]
 		options.preserve_order,
 	) {
 		let value = value.with_description(|| format!("field <{key}> evaluation"))?;
@@ -236,7 +231,6 @@ fn manifest_table(
 		&& !obj.is_empty()
 		&& obj
 			.iter(
-				#[cfg(feature = "exp-preserve-order")]
 				false,
 			)
 			.try_fold(true, |c, (_, v)| Ok(c && is_section(&v?)?) as Result<bool>)?

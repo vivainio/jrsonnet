@@ -100,7 +100,6 @@ fn manifest_jsonml(v: &JSONMLValue, buf: &mut String, opts: &XmlJsonmlFormat) ->
 			attrs.run_assertions()?;
 			for (key, value) in attrs.iter(
 				// Not much sense to preserve order here
-				#[cfg(feature = "exp-preserve-order")]
 				false,
 			) {
 				buf.push(' ');

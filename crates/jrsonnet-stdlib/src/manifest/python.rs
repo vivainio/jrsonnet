@@ -4,14 +4,12 @@ use jrsonnet_evaluator::{
 };
 
 pub struct PythonFormat {
-	#[cfg(feature = "exp-preserve-order")]
 	preserve_order: bool,
 }
 
 impl PythonFormat {
-	pub fn std(#[cfg(feature = "exp-preserve-order")] preserve_order: bool) -> Self {
+	pub fn std(preserve_order: bool) -> Self {
 		Self {
-			#[cfg(feature = "exp-preserve-order")]
 			preserve_order,
 		}
 	}
@@ -42,7 +40,6 @@ impl ManifestFormat for PythonFormat {
 				obj.run_assertions()?;
 				buf.push('{');
 				let fields = obj.fields(
-					#[cfg(feature = "exp-preserve-order")]
 					self.preserve_order,
 				);
 				for (i, field) in fields.into_iter().enumerate() {
@@ -63,14 +60,12 @@ impl ManifestFormat for PythonFormat {
 }
 
 pub struct PythonVarsFormat {
-	#[cfg(feature = "exp-preserve-order")]
 	preserve_order: bool,
 }
 
 impl PythonVarsFormat {
-	pub fn std(#[cfg(feature = "exp-preserve-order")] preserve_order: bool) -> Self {
+	pub fn std(preserve_order: bool) -> Self {
 		Self {
-			#[cfg(feature = "exp-preserve-order")]
 			preserve_order,
 		}
 	}
@@ -79,7 +74,6 @@ impl PythonVarsFormat {
 impl ManifestFormat for PythonVarsFormat {
 	fn manifest_buf(&self, val: Val, buf: &mut String) -> Result<()> {
 		let inner = PythonFormat {
-			#[cfg(feature = "exp-preserve-order")]
 			preserve_order: self.preserve_order,
 		};
 		let Val::Obj(obj) = val else {
@@ -88,7 +82,6 @@ impl ManifestFormat for PythonVarsFormat {
 		obj.run_assertions()?;
 
 		let fields = obj.fields(
-			#[cfg(feature = "exp-preserve-order")]
 			self.preserve_order,
 		);
 

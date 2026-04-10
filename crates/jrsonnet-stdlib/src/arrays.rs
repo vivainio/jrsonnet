@@ -84,7 +84,6 @@ pub fn builtin_map_with_key(
 		// Makes sense mapped object should be ordered the same way, should not break anything when the output is not ordered (the default).
 		// The thrown error might be different, but jsonnet
 		// does not specify the evaluation order.
-		#[cfg(feature = "exp-preserve-order")]
 		true,
 	) {
 		let v = v?;
@@ -440,7 +439,6 @@ pub fn builtin_prune(
 	a: Val,
 
 	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
 	preserve_order: bool,
 ) -> Result<Val> {
 	fn is_content(val: &Val) -> bool {
@@ -459,7 +457,6 @@ pub fn builtin_prune(
 					.and_then(|v| {
 						builtin_prune(
 							v,
-							#[cfg(feature = "exp-preserve-order")]
 							preserve_order,
 						)
 					})
@@ -473,14 +470,12 @@ pub fn builtin_prune(
 		Val::Obj(o) => {
 			let mut out = ObjValueBuilder::new();
 			for (name, value) in o.iter(
-				#[cfg(feature = "exp-preserve-order")]
 				preserve_order,
 			) {
 				let value = value
 					.and_then(|v| {
 						builtin_prune(
 							v,
-							#[cfg(feature = "exp-preserve-order")]
 							preserve_order,
 						)
 					})

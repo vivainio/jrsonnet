@@ -95,11 +95,13 @@ local myFun({a, b, c}) = a + b + c;
 myFun({a: 1, b: 2, c: 3})
 ----
 
-== `exp-preserve-order`
+== `preserve-order` (stabilized)
 
 Object field order preservation during manifestification, upstream issue: https://github.com/google/jsonnet/issues/903
 
-This feature adds a new CLI argument: `--preserve-order`,
+This feature is now stable and always available (no longer requires the `exp-preserve-order` compile-time feature gate).
+
+It provides a CLI argument: `--preserve-order`,
 as well as additional `std.manifest*/std.objectFields*` standard library functions argument `preserve_order`.
 
 Using this argument, it is possible to have same field order in manifestification, as in declaration:
@@ -150,7 +152,7 @@ However, it may be combined with `exp-destruct`, to implement syntax close to pr
 }
 ----
 
-Unfortunately, there is no integration with the `exp-preserve-order` feature,
+Unfortunately, there is no integration with the `preserve-order` feature,
 fields will still be iterated in sorted order, and using old syntax is required:
 
 [source,jsonnet]

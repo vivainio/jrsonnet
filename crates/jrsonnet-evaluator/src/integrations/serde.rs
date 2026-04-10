@@ -205,7 +205,6 @@ impl Serialize for Val {
 			Self::Obj(obj) => {
 				let mut map = serializer.serialize_map(Some(obj.len()))?;
 				for (field, value) in obj.iter(
-					#[cfg(feature = "exp-preserve-order")]
 					true,
 				) {
 					let mut serde_error = None;

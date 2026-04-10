@@ -139,7 +139,6 @@ pub fn evaluate_comp(
 				Val::Obj(obj) => {
 					for field in obj.fields(
 						// TODO: Should there be ability to preserve iteration order?
-						#[cfg(feature = "exp-preserve-order")]
 						false,
 					) {
 						let fctx = Pending::new();

@@ -775,12 +775,10 @@ pub fn equals(val_a: &Val, val_b: &Val) -> Result<bool> {
 				return Ok(true);
 			}
 			let fields = a.fields(
-				#[cfg(feature = "exp-preserve-order")]
 				false,
 			);
 			if fields
 				!= b.fields(
-					#[cfg(feature = "exp-preserve-order")]
 					false,
 				) {
 				return Ok(false);

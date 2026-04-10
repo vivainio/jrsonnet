@@ -66,7 +66,6 @@ pub(crate) fn suggest_object_fields(v: &ObjValue, key: IStr) -> Vec<IStr> {
 	let mut heap = Vec::new();
 	for field in v.fields_ex(
 		true,
-		#[cfg(feature = "exp-preserve-order")]
 		false,
 	) {
 		let conf = strsim::jaro_winkler(field.as_str(), key.as_str());

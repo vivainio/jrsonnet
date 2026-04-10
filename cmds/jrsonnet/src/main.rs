@@ -218,7 +218,6 @@ fn main_real(opts: Opts) -> Result<(), Error> {
 			)
 		};
 		for (field, data) in obj.iter(
-			#[cfg(feature = "exp-preserve-order")]
 			opts.manifest.preserve_order,
 		) {
 			let data = data.with_description(|| format!("getting field {field} for manifest"))?;

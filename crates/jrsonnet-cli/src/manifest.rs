@@ -39,7 +39,6 @@ pub struct ManifestOpts {
 	#[clap(long)]
 	line_padding: Option<usize>,
 	/// Preserve order in object manifestification
-	#[cfg(feature = "exp-preserve-order")]
 	#[clap(long)]
 	pub preserve_order: bool,
 }
@@ -48,7 +47,6 @@ impl ManifestOpts {
 		let format: Box<dyn ManifestFormat> = if self.string {
 			Box::new(StringFormat)
 		} else {
-			#[cfg(feature = "exp-preserve-order")]
 			let preserve_order = self.preserve_order;
 			let format = match self.format {
 				Some(v) => v,
@@ -59,22 +57,18 @@ impl ManifestOpts {
 				ManifestFormatName::String => Box::new(ToStringFormat),
 				ManifestFormatName::Json => Box::new(JsonFormat::cli(
 					self.line_padding.unwrap_or(3),
-					#[cfg(feature = "exp-preserve-order")]
 					preserve_order,
 				)),
 				ManifestFormatName::Yaml => Box::new(YamlFormat::cli(
 					self.line_padding.unwrap_or(2),
-					#[cfg(feature = "exp-preserve-order")]
 					preserve_order,
 				)),
 				ManifestFormatName::Toml => Box::new(TomlFormat::cli(
 					self.line_padding.unwrap_or(2),
-					#[cfg(feature = "exp-preserve-order")]
 					preserve_order,
 				)),
 				ManifestFormatName::XmlJsonml => Box::new(XmlJsonmlFormat::cli()),
 				ManifestFormatName::Ini => Box::new(IniFormat::cli(
-					#[cfg(feature = "exp-preserve-order")]
 					preserve_order,
 				)),
 			}

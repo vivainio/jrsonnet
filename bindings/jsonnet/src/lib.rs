@@ -304,7 +304,6 @@ fn val_to_multi(val: Val, format: &dyn ManifestFormat) -> Result<Vec<(IStr, IStr
 	};
 	let mut out = Vec::new();
 	for (k, v) in val.iter(
-		#[cfg(feature = "exp-preserve-order")]
 		false,
 	) {
 		out.push((k, v?.manifest(format)?.into()));

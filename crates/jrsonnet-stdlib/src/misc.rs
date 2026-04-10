@@ -150,7 +150,6 @@ pub fn builtin_assert_equal(a: Val, b: Val) -> Result<bool> {
 		"  ".to_owned(),
 		"\n",
 		": ",
-		#[cfg(feature = "exp-preserve-order")]
 		true,
 	);
 	let a = if let Some(a) = a.as_str() {
@@ -178,9 +177,7 @@ pub fn builtin_merge_patch(target: Val, patch: Val) -> Result<Val> {
 			// But IndexSet won't allow fast ordered union...
 			// // Makes sense to preserve source ordering where possible.
 			// // May affect evaluation order, but it is not specified by jsonnet spec.
-			// #[cfg(feature = "exp-preserve-order")]
 			// true,
-			#[cfg(feature = "exp-preserve-order")]
 			false,
 		)
 		.into_iter()
@@ -191,7 +188,6 @@ pub fn builtin_merge_patch(target: Val, patch: Val) -> Result<Val> {
 			// New fields (that will be appended at the end) will be alphabeticaly-ordered,
 			// but it is fine for jsonpatch, I don't think people write jsonpatch in jsonnet,
 			// when they can use mixins.
-			#[cfg(feature = "exp-preserve-order")]
 			false,
 		)
 		.into_iter()

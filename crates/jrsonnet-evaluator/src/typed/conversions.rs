@@ -480,7 +480,6 @@ where
 		if V::wants_lazy() {
 			for key in obj.fields_ex(
 				false,
-				#[cfg(feature = "exp-preserve-order")]
 				false,
 			) {
 				let value = obj.get_lazy(key.clone()).expect("field exists");
@@ -490,7 +489,6 @@ where
 			}
 		} else {
 			for (key, value) in obj.iter(
-				#[cfg(feature = "exp-preserve-order")]
 				false,
 			) {
 				let key = K::from_untyped(Val::Str(key.into()))?;

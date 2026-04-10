@@ -7,22 +7,19 @@ use jrsonnet_evaluator::{
 };
 
 pub struct IniFormat {
-	#[cfg(feature = "exp-preserve-order")]
 	preserve_order: bool,
 	final_newline: bool,
 }
 
 impl IniFormat {
-	pub fn std(#[cfg(feature = "exp-preserve-order")] preserve_order: bool) -> Self {
+	pub fn std(preserve_order: bool) -> Self {
 		Self {
-			#[cfg(feature = "exp-preserve-order")]
 			preserve_order,
 			final_newline: true,
 		}
 	}
-	pub fn cli(#[cfg(feature = "exp-preserve-order")] preserve_order: bool) -> Self {
+	pub fn cli(preserve_order: bool) -> Self {
 		Self {
-			#[cfg(feature = "exp-preserve-order")]
 			preserve_order,
 			final_newline: false,
 		}
@@ -40,13 +37,12 @@ impl ManifestFormat for IniFormat {
 }
 
 fn manifest_ini_body(
-	#[cfg(feature = "exp-preserve-order")] format: &IniFormat,
+	format: &IniFormat,
 	body: ObjValue,
 	out: &mut String,
 ) -> Result<()> {
 	for (i, (key, value)) in body
 		.iter(
-			#[cfg(feature = "exp-preserve-order")]
 			format.preserve_order,
 		)
 		.enumerate()
@@ -91,7 +87,6 @@ struct IniObj {
 fn manifest_ini_obj(format: &IniFormat, obj: IniObj, out: &mut String) -> Result<()> {
 	if let Some(main) = obj.main {
 		manifest_ini_body(
-			#[cfg(feature = "exp-preserve-order")]
 			format,
 			main,
 			out,
@@ -106,7 +101,6 @@ fn manifest_ini_obj(format: &IniFormat, obj: IniObj, out: &mut String) -> Result
 		out.push_str(&section);
 		out.push(']');
 		manifest_ini_body(
-			#[cfg(feature = "exp-preserve-order")]
 			format,
 			val,
 			out,

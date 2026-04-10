@@ -30,13 +30,12 @@ pub struct YamlFormat<'s> {
 	quote_values: bool,
 	/// If true - then order of fields is preserved as written,
 	/// instead of sorting alphabetically
-	#[cfg(feature = "exp-preserve-order")]
 	preserve_order: bool,
 }
 impl YamlFormat<'_> {
 	pub fn cli(
 		padding: usize,
-		#[cfg(feature = "exp-preserve-order")] preserve_order: bool,
+		preserve_order: bool,
 	) -> Self {
 		let padding = " ".repeat(padding);
 		Self {
@@ -44,21 +43,19 @@ impl YamlFormat<'_> {
 			arr_element_padding: Cow::Owned(padding),
 			quote_keys: false,
 			quote_values: false,
-			#[cfg(feature = "exp-preserve-order")]
 			preserve_order,
 		}
 	}
 	pub fn std_to_yaml(
 		indent_array_in_object: bool,
 		quote_keys: bool,
-		#[cfg(feature = "exp-preserve-order")] preserve_order: bool,
+		preserve_order: bool,
 	) -> Self {
 		Self {
 			padding: Cow::Borrowed("  "),
 			arr_element_padding: Cow::Borrowed(if indent_array_in_object { "  " } else { "" }),
 			quote_keys,
 			quote_values: true,
-			#[cfg(feature = "exp-preserve-order")]
 			preserve_order,
 		}
 	}
@@ -256,7 +253,6 @@ fn manifest_yaml_ex_buf(
 			let mut had_fields = false;
 			for (i, (key, value)) in o
 				.iter(
-					#[cfg(feature = "exp-preserve-order")]
 					options.preserve_order,
 				)
 				.enumerate()

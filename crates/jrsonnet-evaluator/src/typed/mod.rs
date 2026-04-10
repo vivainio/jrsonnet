@@ -196,7 +196,6 @@ impl CheckType for ComplexValType {
 			Self::AttrsOf(a) => match value {
 				Val::Obj(o) => {
 					for (_key, value) in o.iter(
-						#[cfg(feature = "exp-preserve-order")]
 						false,
 					) {
 						let value = value?;
