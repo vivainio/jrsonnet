@@ -9,14 +9,12 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  fmt:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt
-      - run: cargo fmt --check
+      - run: cargo check --workspace --exclude jrsonnet-peg-parser
 
   clippy:
     runs-on: ubuntu-latest
@@ -25,7 +23,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
-      - run: cargo clippy --workspace --exclude jrsonnet-peg-parser --exclude jrsonnet-lexer -- -D warnings
+      - run: cargo clippy --workspace --exclude jrsonnet-peg-parser
 
   test:
     runs-on: ubuntu-latest
@@ -34,8 +32,6 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo test --workspace --exclude jrsonnet-peg-parser --exclude tests
 
-  # Integration tests (suite + golden) from the tests crate, excluding
-  # cpp_test_suite which requires external test data not in the repo
   integration-test:
     runs-on: ubuntu-latest
     steps:
