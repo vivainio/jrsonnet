@@ -80,13 +80,7 @@ pub fn builtin_map_with_key(
 	obj: ObjValue,
 ) -> Result<ObjValue> {
 	let mut out = ObjValueBuilder::new();
-	for (k, v) in obj.iter(
-		// Makes sense mapped object should be ordered the same way, should not break anything when the output is not ordered (the default).
-		// The thrown error might be different, but jsonnet
-		// does not specify the evaluation order.
-		#[cfg(feature = "exp-preserve-order")]
-		true,
-	) {
+	for (k, v) in obj.iter() {
 		let v = v?;
 		out.field(k.clone()).value(func.call(k, v)?);
 	}
@@ -438,10 +432,6 @@ pub fn builtin_flatten_deep_array(value: Val) -> Result<Vec<Val>> {
 #[builtin]
 pub fn builtin_prune(
 	a: Val,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> Result<Val> {
 	fn is_content(val: &Val) -> bool {
 		match val {
@@ -456,13 +446,7 @@ pub fn builtin_prune(
 			let mut out = Vec::new();
 			for (i, ele) in a.iter().enumerate() {
 				let ele = ele
-					.and_then(|v| {
-						builtin_prune(
-							v,
-							#[cfg(feature = "exp-preserve-order")]
-							preserve_order,
-						)
-					})
+					.and_then(|v| builtin_prune(v))
 					.with_description(|| format!("elem <{i}> pruning"))?;
 				if is_content(&ele) {
 					out.push(ele);
@@ -472,18 +456,9 @@ pub fn builtin_prune(
 		}
 		Val::Obj(o) => {
 			let mut out = ObjValueBuilder::new();
-			for (name, value) in o.iter(
-				#[cfg(feature = "exp-preserve-order")]
-				preserve_order,
-			) {
+			for (name, value) in o.iter() {
 				let value = value
-					.and_then(|v| {
-						builtin_prune(
-							v,
-							#[cfg(feature = "exp-preserve-order")]
-							preserve_order,
-						)
-					})
+					.and_then(|v| builtin_prune(v))
 					.with_description(|| format!("field <{name}> pruning"))?;
 				if !is_content(&value) {
 					continue;

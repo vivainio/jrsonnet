@@ -64,11 +64,7 @@ const fn format_empty_str(str: &str) -> &str {
 
 pub(crate) fn suggest_object_fields(v: &ObjValue, key: IStr) -> Vec<IStr> {
 	let mut heap = Vec::new();
-	for field in v.fields_ex(
-		true,
-		#[cfg(feature = "exp-preserve-order")]
-		false,
-	) {
+	for field in v.fields_ex(true) {
 		let conf = strsim::jaro_winkler(field.as_str(), key.as_str());
 		if conf < 0.8 {
 			continue;

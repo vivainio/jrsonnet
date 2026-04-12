@@ -10,135 +10,61 @@ use jrsonnet_evaluator::{
 pub fn builtin_object_fields_ex(
 	obj: ObjValue,
 	hidden: bool,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> Vec<Val> {
-	let out = obj.fields_ex(
-		hidden,
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
-	);
+	let out = obj.fields_ex(hidden);
 	out.into_iter().map(Val::string).collect::<Vec<_>>()
 }
 
 #[builtin]
 pub fn builtin_object_fields(
 	o: ObjValue,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> Vec<Val> {
-	builtin_object_fields_ex(
-		o,
-		false,
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
-	)
+	builtin_object_fields_ex(o, false)
 }
 
 #[builtin]
 pub fn builtin_object_fields_all(
 	o: ObjValue,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> Vec<Val> {
-	builtin_object_fields_ex(
-		o,
-		true,
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
-	)
+	builtin_object_fields_ex(o, true)
 }
 
 pub fn builtin_object_values_ex(
 	o: ObjValue,
 	include_hidden: bool,
-
-	#[cfg(feature = "exp-preserve-order")] preserve_order: bool,
 ) -> ArrValue {
-	o.values_ex(
-		include_hidden,
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
-	)
+	o.values_ex(include_hidden)
 }
 #[builtin]
 pub fn builtin_object_values(
 	o: ObjValue,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> ArrValue {
-	builtin_object_values_ex(
-		o,
-		false,
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
-	)
+	builtin_object_values_ex(o, false)
 }
 #[builtin]
 pub fn builtin_object_values_all(
 	o: ObjValue,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> ArrValue {
-	builtin_object_values_ex(
-		o,
-		true,
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
-	)
+	builtin_object_values_ex(o, true)
 }
 
 pub fn builtin_object_keys_values_ex(
 	o: ObjValue,
 	include_hidden: bool,
-
-	#[cfg(feature = "exp-preserve-order")] preserve_order: bool,
 ) -> ArrValue {
-	o.key_values_ex(
-		include_hidden,
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
-	)
+	o.key_values_ex(include_hidden)
 }
 #[builtin]
 pub fn builtin_object_keys_values(
 	o: ObjValue,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> ArrValue {
-	builtin_object_keys_values_ex(
-		o,
-		false,
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
-	)
+	builtin_object_keys_values_ex(o, false)
 }
 #[builtin]
 pub fn builtin_object_keys_values_all(
 	o: ObjValue,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> ArrValue {
-	builtin_object_keys_values_ex(
-		o,
-		true,
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
-	)
+	builtin_object_keys_values_ex(o, true)
 }
 
 #[builtin]
