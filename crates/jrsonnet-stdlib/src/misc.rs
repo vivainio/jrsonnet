@@ -150,8 +150,6 @@ pub fn builtin_assert_equal(a: Val, b: Val) -> Result<bool> {
 		"  ".to_owned(),
 		"\n",
 		": ",
-		#[cfg(feature = "exp-preserve-order")]
-		true,
 	);
 	let a = if let Some(a) = a.as_str() {
 		format!("<A>\n{a}\n</A>")
@@ -173,27 +171,11 @@ pub fn builtin_merge_patch(target: Val, patch: Val) -> Result<Val> {
 	};
 	let target = target.as_obj().unwrap_or_else(ObjValue::empty);
 	let target_fields = target
-		.fields(
-			// FIXME: Makes no sense to preserve order for BTreeSet, it would be better to use IndexSet here?
-			// But IndexSet won't allow fast ordered union...
-			// // Makes sense to preserve source ordering where possible.
-			// // May affect evaluation order, but it is not specified by jsonnet spec.
-			// #[cfg(feature = "exp-preserve-order")]
-			// true,
-			#[cfg(feature = "exp-preserve-order")]
-			false,
-		)
+		.fields()
 		.into_iter()
 		.collect::<BTreeSet<IStr>>();
 	let patch_fields = patch
-		.fields(
-			// No need to look at the patch field order, I think?
-			// New fields (that will be appended at the end) will be alphabeticaly-ordered,
-			// but it is fine for jsonpatch, I don't think people write jsonpatch in jsonnet,
-			// when they can use mixins.
-			#[cfg(feature = "exp-preserve-order")]
-			false,
-		)
+		.fields()
 		.into_iter()
 		.collect::<BTreeSet<IStr>>();
 

@@ -137,11 +137,7 @@ pub fn evaluate_comp(
 				}
 				#[cfg(feature = "exp-object-iteration")]
 				Val::Obj(obj) => {
-					for field in obj.fields(
-						// TODO: Should there be ability to preserve iteration order?
-						#[cfg(feature = "exp-preserve-order")]
-						false,
-					) {
+					for field in obj.fields() {
 						let fctx = Pending::new();
 						let mut new_bindings = FxHashMap::with_capacity(into.binds_len());
 						let obj = obj.clone();

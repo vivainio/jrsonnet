@@ -166,6 +166,10 @@ fn main_real(opts: Opts) -> Result<(), Error> {
 	let _gc_print_stats = opts.gc.stats_printer();
 	let _stack_depth_override = opts.misc.stack_size_override();
 
+	if opts.manifest.preserve_order {
+		jrsonnet_evaluator::set_preserve_order(true);
+	}
+
 	let import_resolver = opts.misc.import_resolver();
 	let std = opts.std.context_initializer()?;
 
@@ -217,10 +221,7 @@ fn main_real(opts: Opts) -> Result<(), Error> {
 				val.value_type()
 			)
 		};
-		for (field, data) in obj.iter(
-			#[cfg(feature = "exp-preserve-order")]
-			opts.manifest.preserve_order,
-		) {
+		for (field, data) in obj.iter() {
 			let data = data.with_description(|| format!("getting field {field} for manifest"))?;
 
 			let mut path = multi.clone();

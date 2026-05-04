@@ -95,19 +95,27 @@ local myFun({a, b, c}) = a + b + c;
 myFun({a: 1, b: 2, c: 3})
 ----
 
-== `exp-preserve-order`
+== `--preserve-order`
 
 Object field order preservation during manifestification, upstream issue: https://github.com/google/jsonnet/issues/903
 
-This feature adds a new CLI argument: `--preserve-order`,
-as well as additional `std.manifest*/std.objectFields*` standard library functions argument `preserve_order`.
+This is a global CLI flag: `--preserve-order`.
+When enabled, all object field iteration (including manifestification and `std.objectFields*`) preserves declaration order instead of sorting alphabetically.
 
-Using this argument, it is possible to have same field order in manifestification, as in declaration:
+[source,bash]
+----
+jrsonnet --preserve-order input.jsonnet
+----
+
+Example behavior:
 
 [source,jsonnet]
 ----
-std.objectFields({c: 1, b: 2, a: 3}, preserve_order = false) == ['a', 'b', 'c'] # Fields were sorted
-std.manifestJson({c: 1, b: 2, a: 3}, preserve_order = true) == ['c', 'b', 'a'] # Fields were serialized in declaration order
+// Without --preserve-order:
+std.objectFields({c: 1, b: 2, a: 3}) == ['a', 'b', 'c']  // Fields are sorted
+
+// With --preserve-order:
+std.objectFields({c: 1, b: 2, a: 3}) == ['c', 'b', 'a']  // Fields preserve declaration order
 ----
 
 == `exp-object-iteration`
@@ -150,26 +158,7 @@ However, it may be combined with `exp-destruct`, to implement syntax close to pr
 }
 ----
 
-Unfortunately, there is no integration with the `exp-preserve-order` feature,
-fields will still be iterated in sorted order, and using old syntax is required:
-
-[source,jsonnet]
-----
-local obj = {
-    c: 3,
-    b: 2,
-    a: 1,
-};
-
-{
-    [key + '!']: obj[key] + '!'
-    for key in std.objectFields(obj, preserve_order: true)
-} == {
-    'c!': '3!',
-    'b!': '2!',
-    'a!': '1!',
-}
-----
+When `--preserve-order` is enabled globally, object iteration in comprehensions also preserves declaration order.
 
 == `exp-null-coalescing`
 

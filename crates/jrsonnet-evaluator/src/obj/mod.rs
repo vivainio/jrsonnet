@@ -31,35 +31,21 @@ use crate::{
 	val::{ArrValue, ThunkValue},
 };
 
-#[cfg(not(feature = "exp-preserve-order"))]
-pub mod ordering {
-	#![allow(
-		// This module works as stub for preserve-order feature
-		clippy::unused_self,
-	)]
-
-	use jrsonnet_gcmodule::Trace;
-
-	#[derive(Clone, Copy, Default, Debug, Trace, PartialEq, Eq, PartialOrd, Ord)]
-	pub struct FieldIndex(());
-	impl FieldIndex {
-		pub fn absolute(_v: u32) -> Self {
-			Self(())
-		}
-		#[must_use]
-		pub const fn next(self) -> Self {
-			Self(())
-		}
-	}
-
-	#[derive(Clone, Copy, Default, Debug, Trace, PartialEq, Eq, PartialOrd, Ord)]
-	pub struct SuperDepth(());
-	impl SuperDepth {
-		pub(super) fn deepen(self) {}
-	}
+/// Global setting for preserve-order behavior, set via CLI `--preserve-order`.
+/// When true, object field iteration preserves source order instead of sorting alphabetically.
+pub fn set_preserve_order(v: bool) {
+	PRESERVE_ORDER.with(|p| p.set(v));
 }
 
-#[cfg(feature = "exp-preserve-order")]
+/// Returns the current global preserve-order setting.
+pub fn preserve_order() -> bool {
+	PRESERVE_ORDER.with(|p| p.get())
+}
+
+thread_local! {
+	static PRESERVE_ORDER: Cell<bool> = const { Cell::new(false) };
+}
+
 pub mod ordering {
 	use jrsonnet_gcmodule::Trace;
 
@@ -731,14 +717,8 @@ impl ObjValue {
 		Ok(())
 	}
 
-	pub fn iter(
-		&self,
-		#[cfg(feature = "exp-preserve-order")] preserve_order: bool,
-	) -> impl Iterator<Item = (IStr, Result<Val>)> + '_ {
-		let fields = self.fields(
-			#[cfg(feature = "exp-preserve-order")]
-			preserve_order,
-		);
+	pub fn iter(&self) -> impl Iterator<Item = (IStr, Result<Val>)> + '_ {
+		let fields = self.fields();
 		fields.into_iter().map(|field| {
 			(
 				field.clone(),
@@ -889,10 +869,8 @@ impl ObjValue {
 	pub fn fields_ex(
 		&self,
 		include_hidden: bool,
-		#[cfg(feature = "exp-preserve-order")] preserve_order: bool,
 	) -> Vec<IStr> {
-		#[cfg(feature = "exp-preserve-order")]
-		if preserve_order {
+		if preserve_order() {
 			let (mut fields, mut keys): (Vec<_>, Vec<_>) = self
 				.fields_visibility()
 				.into_iter()
@@ -928,57 +906,32 @@ impl ObjValue {
 		fields.sort_unstable();
 		fields
 	}
-	pub fn fields(&self, #[cfg(feature = "exp-preserve-order")] preserve_order: bool) -> Vec<IStr> {
-		self.fields_ex(
-			false,
-			#[cfg(feature = "exp-preserve-order")]
-			preserve_order,
-		)
+	pub fn fields(&self) -> Vec<IStr> {
+		self.fields_ex(false)
 	}
 	pub fn values_ex(
 		&self,
 		include_hidden: bool,
-		#[cfg(feature = "exp-preserve-order")] preserve_order: bool,
 	) -> ArrValue {
 		ArrValue::new(PickObjectValues::new(
 			self.clone(),
-			self.fields_ex(
-				include_hidden,
-				#[cfg(feature = "exp-preserve-order")]
-				preserve_order,
-			),
+			self.fields_ex(include_hidden),
 		))
 	}
-	pub fn values(&self, #[cfg(feature = "exp-preserve-order")] preserve_order: bool) -> ArrValue {
-		self.values_ex(
-			false,
-			#[cfg(feature = "exp-preserve-order")]
-			preserve_order,
-		)
+	pub fn values(&self) -> ArrValue {
+		self.values_ex(false)
 	}
 	pub fn key_values_ex(
 		&self,
 		include_hidden: bool,
-		#[cfg(feature = "exp-preserve-order")] preserve_order: bool,
 	) -> ArrValue {
 		ArrValue::new(PickObjectKeyValues::new(
 			self.clone(),
-			self.fields_ex(
-				include_hidden,
-				#[cfg(feature = "exp-preserve-order")]
-				preserve_order,
-			),
+			self.fields_ex(include_hidden),
 		))
 	}
-	pub fn key_values(
-		&self,
-		#[cfg(feature = "exp-preserve-order")] preserve_order: bool,
-	) -> ArrValue {
-		self.key_values_ex(
-			false,
-			#[cfg(feature = "exp-preserve-order")]
-			preserve_order,
-		)
+	pub fn key_values(&self) -> ArrValue {
+		self.key_values_ex(false)
 	}
 }
 

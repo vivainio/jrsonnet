@@ -62,8 +62,6 @@ pub struct JsonFormat<'s> {
 	mtype: JsonFormatting,
 	newline: &'s str,
 	key_val_sep: &'s str,
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 	#[cfg(feature = "exp-bigint")]
 	preserve_bigints: bool,
 	debug_truncate_strings: Option<usize>,
@@ -71,14 +69,12 @@ pub struct JsonFormat<'s> {
 
 impl<'s> JsonFormat<'s> {
 	// Minifying format
-	pub fn minify(#[cfg(feature = "exp-preserve-order")] preserve_order: bool) -> Self {
+	pub fn minify() -> Self {
 		Self {
 			padding: Cow::Borrowed(""),
 			mtype: JsonFormatting::Minify,
 			newline: "\n",
 			key_val_sep: ":",
-			#[cfg(feature = "exp-preserve-order")]
-			preserve_order,
 			#[cfg(feature = "exp-bigint")]
 			preserve_bigints: false,
 			debug_truncate_strings: None,
@@ -92,8 +88,6 @@ impl<'s> JsonFormat<'s> {
 			mtype: JsonFormatting::ToString,
 			newline: "\n",
 			key_val_sep: ": ",
-			#[cfg(feature = "exp-preserve-order")]
-			preserve_order: false,
 			#[cfg(feature = "exp-bigint")]
 			preserve_bigints: false,
 			debug_truncate_strings: None,
@@ -103,38 +97,27 @@ impl<'s> JsonFormat<'s> {
 		padding: String,
 		newline: &'s str,
 		key_val_sep: &'s str,
-		#[cfg(feature = "exp-preserve-order")] preserve_order: bool,
 	) -> Self {
 		Self {
 			padding: Cow::Owned(padding),
 			mtype: JsonFormatting::Std,
 			newline,
 			key_val_sep,
-			#[cfg(feature = "exp-preserve-order")]
-			preserve_order,
 			#[cfg(feature = "exp-bigint")]
 			preserve_bigints: false,
 			debug_truncate_strings: None,
 		}
 	}
 	// Same format as CLI manifestification
-	pub fn cli(
-		padding: usize,
-		#[cfg(feature = "exp-preserve-order")] preserve_order: bool,
-	) -> Self {
+	pub fn cli(padding: usize) -> Self {
 		if padding == 0 {
-			return Self::minify(
-				#[cfg(feature = "exp-preserve-order")]
-				preserve_order,
-			);
+			return Self::minify();
 		}
 		Self {
 			padding: Cow::Owned(" ".repeat(padding)),
 			mtype: JsonFormatting::Manifest,
 			newline: "\n",
 			key_val_sep: ": ",
-			#[cfg(feature = "exp-preserve-order")]
-			preserve_order,
 			#[cfg(feature = "exp-bigint")]
 			preserve_bigints: false,
 			debug_truncate_strings: None,
@@ -147,8 +130,6 @@ impl<'s> JsonFormat<'s> {
 			mtype: JsonFormatting::Manifest,
 			newline: "\n",
 			key_val_sep: ": ",
-			#[cfg(feature = "exp-preserve-order")]
-			preserve_order: true,
 			#[cfg(feature = "exp-bigint")]
 			preserve_bigints: true,
 			debug_truncate_strings: Some(256),
@@ -162,8 +143,6 @@ impl Default for JsonFormat<'static> {
 			mtype: JsonFormatting::Manifest,
 			newline: "\n",
 			key_val_sep: ": ",
-			#[cfg(feature = "exp-preserve-order")]
-			preserve_order: false,
 			#[cfg(feature = "exp-bigint")]
 			preserve_bigints: false,
 			debug_truncate_strings: None,
@@ -281,10 +260,7 @@ fn manifest_json_ex_buf(
 
 			let mut had_fields = false;
 			for (i, (key, value)) in obj
-				.iter(
-					#[cfg(feature = "exp-preserve-order")]
-					options.preserve_order,
-				)
+				.iter()
 				.enumerate()
 			{
 				had_fields = true;

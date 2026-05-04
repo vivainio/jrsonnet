@@ -3,7 +3,6 @@ use std::{collections::HashMap, hash::BuildHasher};
 use jrsonnet_interner::IStr;
 use jrsonnet_ir::{BindSpec, Destruct};
 
-#[cfg(feature = "exp-preserve-order")]
 use crate::evaluate;
 use crate::{
 	Context, Pending, Thunk, Val, bail,

@@ -31,10 +31,6 @@ pub fn builtin_manifest_json_ex(
 	indent: String,
 	newline: Option<IStr>,
 	key_val_sep: Option<IStr>,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> Result<String> {
 	let newline = newline.as_deref().unwrap_or("\n");
 	let key_val_sep = key_val_sep.as_deref().unwrap_or(": ");
@@ -42,41 +38,26 @@ pub fn builtin_manifest_json_ex(
 		indent,
 		newline,
 		key_val_sep,
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
 	))
 }
 
 #[builtin]
 pub fn builtin_manifest_json(
 	value: Val,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> Result<String> {
 	builtin_manifest_json_ex(
 		value,
 		"    ".to_owned(),
 		None,
 		None,
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
 	)
 }
 
 #[builtin]
 pub fn builtin_manifest_json_minified(
 	value: Val,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> Result<String> {
-	value.manifest(JsonFormat::minify(
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
-	))
+	value.manifest(JsonFormat::minify())
 }
 
 #[builtin]
@@ -84,16 +65,10 @@ pub fn builtin_manifest_yaml_doc(
 	value: Val,
 	#[default(false)] indent_array_in_object: bool,
 	#[default(true)] quote_keys: bool,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> Result<String> {
 	value.manifest(YamlFormat::std_to_yaml(
 		indent_array_in_object,
 		quote_keys,
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
 	))
 }
 
@@ -104,17 +79,11 @@ pub fn builtin_manifest_yaml_stream(
 	#[default(false)] indent_array_in_object: bool,
 	#[default(true)] c_document_end: bool,
 	#[default(true)] quote_keys: bool,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> Result<String> {
 	value.manifest(YamlStreamFormat::std_yaml_stream(
 		YamlFormat::std_to_yaml(
 			indent_array_in_object,
 			quote_keys,
-			#[cfg(feature = "exp-preserve-order")]
-			preserve_order,
 		),
 		c_document_end,
 	))
@@ -124,31 +93,17 @@ pub fn builtin_manifest_yaml_stream(
 pub fn builtin_manifest_toml_ex(
 	value: ObjValue,
 	indent: String,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> Result<String> {
-	Val::Obj(value).manifest(TomlFormat::std_to_toml(
-		indent,
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
-	))
+	Val::Obj(value).manifest(TomlFormat::std_to_toml(indent))
 }
 
 #[builtin]
 pub fn builtin_manifest_toml(
 	value: ObjValue,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> Result<String> {
 	builtin_manifest_toml_ex(
 		value,
 		"  ".to_owned(),
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
 	)
 }
 
@@ -160,28 +115,14 @@ pub fn builtin_to_string(a: Val) -> Result<IStr> {
 #[builtin]
 pub fn builtin_manifest_python(
 	v: Val,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> Result<String> {
-	v.manifest(PythonFormat::std(
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
-	))
+	v.manifest(PythonFormat::std())
 }
 #[builtin]
 pub fn builtin_manifest_python_vars(
 	conf: Val,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> Result<String> {
-	conf.manifest(PythonVarsFormat::std(
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
-	))
+	conf.manifest(PythonVarsFormat::std())
 }
 
 #[builtin]
@@ -197,13 +138,6 @@ pub fn builtin_manifest_xml_jsonml(value: Val) -> Result<String> {
 #[builtin]
 pub fn builtin_manifest_ini(
 	ini: Val,
-
-	#[default(false)]
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
 ) -> Result<String> {
-	ini.manifest(IniFormat::std(
-		#[cfg(feature = "exp-preserve-order")]
-		preserve_order,
-	))
+	ini.manifest(IniFormat::std())
 }

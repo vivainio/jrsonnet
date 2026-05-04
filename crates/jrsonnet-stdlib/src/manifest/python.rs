@@ -3,17 +3,11 @@ use jrsonnet_evaluator::{
 	manifest::{ManifestFormat, ToStringFormat, escape_string_json_buf},
 };
 
-pub struct PythonFormat {
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
-}
+pub struct PythonFormat;
 
 impl PythonFormat {
-	pub fn std(#[cfg(feature = "exp-preserve-order")] preserve_order: bool) -> Self {
-		Self {
-			#[cfg(feature = "exp-preserve-order")]
-			preserve_order,
-		}
+	pub fn std() -> Self {
+		Self
 	}
 }
 
@@ -41,10 +35,7 @@ impl ManifestFormat for PythonFormat {
 			Val::Obj(obj) => {
 				obj.run_assertions()?;
 				buf.push('{');
-				let fields = obj.fields(
-					#[cfg(feature = "exp-preserve-order")]
-					self.preserve_order,
-				);
+				let fields = obj.fields();
 				for (i, field) in fields.into_iter().enumerate() {
 					if i != 0 {
 						buf.push_str(", ");
@@ -62,35 +53,23 @@ impl ManifestFormat for PythonFormat {
 	}
 }
 
-pub struct PythonVarsFormat {
-	#[cfg(feature = "exp-preserve-order")]
-	preserve_order: bool,
-}
+pub struct PythonVarsFormat;
 
 impl PythonVarsFormat {
-	pub fn std(#[cfg(feature = "exp-preserve-order")] preserve_order: bool) -> Self {
-		Self {
-			#[cfg(feature = "exp-preserve-order")]
-			preserve_order,
-		}
+	pub fn std() -> Self {
+		Self
 	}
 }
 
 impl ManifestFormat for PythonVarsFormat {
 	fn manifest_buf(&self, val: Val, buf: &mut String) -> Result<()> {
-		let inner = PythonFormat {
-			#[cfg(feature = "exp-preserve-order")]
-			preserve_order: self.preserve_order,
-		};
+		let inner = PythonFormat;
 		let Val::Obj(obj) = val else {
 			bail!("python vars root should be object");
 		};
 		obj.run_assertions()?;
 
-		let fields = obj.fields(
-			#[cfg(feature = "exp-preserve-order")]
-			self.preserve_order,
-		);
+		let fields = obj.fields();
 
 		for field in fields {
 			// Yep, no escaping

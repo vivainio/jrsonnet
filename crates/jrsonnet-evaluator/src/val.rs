@@ -774,15 +774,9 @@ pub fn equals(val_a: &Val, val_b: &Val) -> Result<bool> {
 			if ObjValue::ptr_eq(a, b) {
 				return Ok(true);
 			}
-			let fields = a.fields(
-				#[cfg(feature = "exp-preserve-order")]
-				false,
-			);
+			let fields = a.fields();
 			if fields
-				!= b.fields(
-					#[cfg(feature = "exp-preserve-order")]
-					false,
-				) {
+				!= b.fields() {
 				return Ok(false);
 			}
 			for field in fields {

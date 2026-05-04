@@ -478,21 +478,14 @@ where
 
 		let mut out = Self::new();
 		if V::wants_lazy() {
-			for key in obj.fields_ex(
-				false,
-				#[cfg(feature = "exp-preserve-order")]
-				false,
-			) {
+			for key in obj.fields_ex(false) {
 				let value = obj.get_lazy(key.clone()).expect("field exists");
 				let value = V::from_lazy_untyped(value)?;
 				let key = K::from_untyped(Val::Str(key.into()))?;
 				let _ = out.insert(key, value);
 			}
 		} else {
-			for (key, value) in obj.iter(
-				#[cfg(feature = "exp-preserve-order")]
-				false,
-			) {
+			for (key, value) in obj.iter() {
 				let key = K::from_untyped(Val::Str(key.into()))?;
 				let value = V::from_untyped(value?)?;
 				let _ = out.insert(key, value);
