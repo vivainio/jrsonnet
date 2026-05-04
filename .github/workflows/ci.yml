@@ -13,10 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@nightly
+      - uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: nightly-2026-05-04
           components: rustfmt
-      - run: cargo +nightly fmt --check
+      - run: cargo fmt --check
 
   check:
     runs-on: ubuntu-latest
