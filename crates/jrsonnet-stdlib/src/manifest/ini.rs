@@ -1,9 +1,9 @@
 use std::collections::BTreeMap;
 
 use jrsonnet_evaluator::{
-	IStr, ObjValue, Result, ResultExt, Val,
 	manifest::{ManifestFormat, ToStringFormat},
 	typed::{FromUntyped, Typed},
+	IStr, ObjValue, Result, ResultExt, Val,
 };
 
 pub struct IniFormat {
@@ -33,14 +33,8 @@ impl ManifestFormat for IniFormat {
 	}
 }
 
-fn manifest_ini_body(
-	body: ObjValue,
-	out: &mut String,
-) -> Result<()> {
-	for (i, (key, value)) in body
-		.iter()
-		.enumerate()
-	{
+fn manifest_ini_body(body: ObjValue, out: &mut String) -> Result<()> {
+	for (i, (key, value)) in body.iter().enumerate() {
 		if i != 0 || !out.is_empty() {
 			out.push('\n');
 		}
@@ -80,11 +74,7 @@ struct IniObj {
 
 fn manifest_ini_obj(format: &IniFormat, obj: IniObj, out: &mut String) -> Result<()> {
 	if let Some(main) = obj.main {
-		manifest_ini_body(
-			main,
-			out,
-		)
-		.description("<main> manifestification")?;
+		manifest_ini_body(main, out).description("<main> manifestification")?;
 	}
 	for (i, (section, val)) in obj.sections.into_iter().enumerate() {
 		if i != 0 || !out.is_empty() {
@@ -93,11 +83,8 @@ fn manifest_ini_obj(format: &IniFormat, obj: IniObj, out: &mut String) -> Result
 		out.push('[');
 		out.push_str(&section);
 		out.push(']');
-		manifest_ini_body(
-			val,
-			out,
-		)
-		.with_description(|| format!("<{section}> section manifestification"))?;
+		manifest_ini_body(val, out)
+			.with_description(|| format!("<{section}> section manifestification"))?;
 	}
 	if format.final_newline {
 		out.push('\n');

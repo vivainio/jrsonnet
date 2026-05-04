@@ -1,4 +1,4 @@
-use jrsonnet_evaluator::{IStr, function::builtin};
+use jrsonnet_evaluator::{function::builtin, IStr};
 
 #[builtin]
 pub fn builtin_md5(s: IStr) -> String {

@@ -6,9 +6,9 @@ mod yaml;
 
 pub use ini::IniFormat;
 use jrsonnet_evaluator::{
-	IStr, ObjValue, Result, Val,
 	function::builtin,
-	manifest::{JsonFormat, YamlStreamFormat, escape_string_json},
+	manifest::{escape_string_json, JsonFormat, YamlStreamFormat},
+	IStr, ObjValue, Result, Val,
 };
 pub use python::{PythonFormat, PythonVarsFormat};
 pub use toml::TomlFormat;
@@ -34,29 +34,16 @@ pub fn builtin_manifest_json_ex(
 ) -> Result<String> {
 	let newline = newline.as_deref().unwrap_or("\n");
 	let key_val_sep = key_val_sep.as_deref().unwrap_or(": ");
-	value.manifest(JsonFormat::std_to_json(
-		indent,
-		newline,
-		key_val_sep,
-	))
+	value.manifest(JsonFormat::std_to_json(indent, newline, key_val_sep))
 }
 
 #[builtin]
-pub fn builtin_manifest_json(
-	value: Val,
-) -> Result<String> {
-	builtin_manifest_json_ex(
-		value,
-		"    ".to_owned(),
-		None,
-		None,
-	)
+pub fn builtin_manifest_json(value: Val) -> Result<String> {
+	builtin_manifest_json_ex(value, "    ".to_owned(), None, None)
 }
 
 #[builtin]
-pub fn builtin_manifest_json_minified(
-	value: Val,
-) -> Result<String> {
+pub fn builtin_manifest_json_minified(value: Val) -> Result<String> {
 	value.manifest(JsonFormat::minify())
 }
 
@@ -66,10 +53,7 @@ pub fn builtin_manifest_yaml_doc(
 	#[default(false)] indent_array_in_object: bool,
 	#[default(true)] quote_keys: bool,
 ) -> Result<String> {
-	value.manifest(YamlFormat::std_to_yaml(
-		indent_array_in_object,
-		quote_keys,
-	))
+	value.manifest(YamlFormat::std_to_yaml(indent_array_in_object, quote_keys))
 }
 
 #[builtin]
@@ -81,30 +65,19 @@ pub fn builtin_manifest_yaml_stream(
 	#[default(true)] quote_keys: bool,
 ) -> Result<String> {
 	value.manifest(YamlStreamFormat::std_yaml_stream(
-		YamlFormat::std_to_yaml(
-			indent_array_in_object,
-			quote_keys,
-		),
+		YamlFormat::std_to_yaml(indent_array_in_object, quote_keys),
 		c_document_end,
 	))
 }
 
 #[builtin]
-pub fn builtin_manifest_toml_ex(
-	value: ObjValue,
-	indent: String,
-) -> Result<String> {
+pub fn builtin_manifest_toml_ex(value: ObjValue, indent: String) -> Result<String> {
 	Val::Obj(value).manifest(TomlFormat::std_to_toml(indent))
 }
 
 #[builtin]
-pub fn builtin_manifest_toml(
-	value: ObjValue,
-) -> Result<String> {
-	builtin_manifest_toml_ex(
-		value,
-		"  ".to_owned(),
-	)
+pub fn builtin_manifest_toml(value: ObjValue) -> Result<String> {
+	builtin_manifest_toml_ex(value, "  ".to_owned())
 }
 
 #[builtin]
@@ -113,15 +86,11 @@ pub fn builtin_to_string(a: Val) -> Result<IStr> {
 }
 
 #[builtin]
-pub fn builtin_manifest_python(
-	v: Val,
-) -> Result<String> {
+pub fn builtin_manifest_python(v: Val) -> Result<String> {
 	v.manifest(PythonFormat::std())
 }
 #[builtin]
-pub fn builtin_manifest_python_vars(
-	conf: Val,
-) -> Result<String> {
+pub fn builtin_manifest_python_vars(conf: Val) -> Result<String> {
 	conf.manifest(PythonVarsFormat::std())
 }
 
@@ -136,8 +105,6 @@ pub fn builtin_manifest_xml_jsonml(value: Val) -> Result<String> {
 }
 
 #[builtin]
-pub fn builtin_manifest_ini(
-	ini: Val,
-) -> Result<String> {
+pub fn builtin_manifest_ini(ini: Val) -> Result<String> {
 	ini.manifest(IniFormat::std())
 }

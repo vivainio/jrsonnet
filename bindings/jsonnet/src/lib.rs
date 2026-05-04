@@ -21,13 +21,14 @@ use std::{
 };
 
 use jrsonnet_evaluator::{
-	AsPathLike, FileImportResolver, IStr, ImportResolver, Result, State, Val, apply_tla, bail,
+	apply_tla, bail,
 	gc::WithCapacityExt as _,
 	manifest::{JsonFormat, ManifestFormat, ToStringFormat},
 	rustc_hash::FxHashMap,
 	stack::set_stack_depth_limit,
 	tla::TlaArg,
 	trace::{CompactFormat, PathResolver, TraceFormat},
+	AsPathLike, FileImportResolver, IStr, ImportResolver, Result, State, Val,
 };
 use jrsonnet_gcmodule::Acyclic;
 use jrsonnet_ir::SourcePath;

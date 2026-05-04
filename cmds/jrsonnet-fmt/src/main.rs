@@ -6,7 +6,7 @@ use std::{
 };
 
 use clap::Parser;
-use jrsonnet_formatter::{FormatOptions, format};
+use jrsonnet_formatter::{format, FormatOptions};
 
 #[derive(Parser)]
 #[allow(clippy::struct_excessive_bools)]

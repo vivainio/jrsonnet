@@ -1,6 +1,6 @@
 use anyhow::Result;
 use clap::Parser;
-use xshell::{Shell, cmd};
+use xshell::{cmd, Shell};
 
 mod sourcegen;
 

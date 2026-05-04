@@ -3,28 +3,27 @@ use std::rc::Rc;
 use jrsonnet_gcmodule::{Cc, Trace};
 use jrsonnet_interner::IStr;
 use jrsonnet_ir::{
-	ArgsDesc, AssertStmt, BinaryOpType, BindSpec, CompSpec, Expr, ExprParams, FieldMember,
-	FieldName, ForSpecData, IfSpecData, ImportKind, LiteralType, ObjBody, ObjMembers, Spanned,
-	function::ParamName,
+	function::ParamName, ArgsDesc, AssertStmt, BinaryOpType, BindSpec, CompSpec, Expr, ExprParams,
+	FieldMember, FieldName, ForSpecData, IfSpecData, ImportKind, LiteralType, ObjBody, ObjMembers,
+	Spanned,
 };
 use jrsonnet_types::ValType;
 use rustc_hash::FxHashMap;
 
 use self::destructure::destruct;
 use crate::{
-	Context, Error, ObjValue, ObjValueBuilder, ObjectAssertion, Pending, Result, ResultExt,
-	SupThis, Unbound, Val,
 	arr::ArrValue,
 	bail,
 	destructure::evaluate_dest,
-	error::{ErrorKind::*, suggest_object_fields},
+	error::{suggest_object_fields, ErrorKind::*},
 	evaluate::operator::{evaluate_binary_op_special, evaluate_unary_op},
 	function::{CallLocation, FuncDesc, FuncVal},
 	gc::WithCapacityExt as _,
 	in_frame,
 	typed::{FromUntyped, IntoUntyped as _, Typed},
 	val::{CachedUnbound, IndexableVal, NumValue, StrValue, Thunk},
-	with_state,
+	with_state, Context, Error, ObjValue, ObjValueBuilder, ObjectAssertion, Pending, Result,
+	ResultExt, SupThis, Unbound, Val,
 };
 pub mod destructure;
 pub mod operator;
@@ -123,39 +122,37 @@ pub fn evaluate_comp(
 		Some(CompSpec::ForSpec(ForSpecData {
 			destruct: into,
 			over,
-		})) => {
-			match evaluate(ctx.clone(), over)? {
-				Val::Arr(list) => {
-					for item in list.iter_lazy() {
-						let fctx = Pending::new();
-						let mut new_bindings = FxHashMap::with_capacity(into.binds_len());
-						destruct(into, item, fctx.clone(), &mut new_bindings)?;
-						let ctx = ctx.clone().extend_bindings(new_bindings).into_future(fctx);
+		})) => match evaluate(ctx.clone(), over)? {
+			Val::Arr(list) => {
+				for item in list.iter_lazy() {
+					let fctx = Pending::new();
+					let mut new_bindings = FxHashMap::with_capacity(into.binds_len());
+					destruct(into, item, fctx.clone(), &mut new_bindings)?;
+					let ctx = ctx.clone().extend_bindings(new_bindings).into_future(fctx);
 
-						evaluate_comp(ctx, &specs[1..], callback)?;
-					}
+					evaluate_comp(ctx, &specs[1..], callback)?;
 				}
-				#[cfg(feature = "exp-object-iteration")]
-				Val::Obj(obj) => {
-					for field in obj.fields() {
-						let fctx = Pending::new();
-						let mut new_bindings = FxHashMap::with_capacity(into.binds_len());
-						let obj = obj.clone();
-						let value = Thunk::evaluated(Val::Arr(ArrValue::lazy(vec![
-							Thunk::evaluated(Val::string(field.clone())),
-							Thunk!(move || obj.get(field).transpose().expect(
-								"field exists, as field name was obtained from object.fields()",
-							)),
-						])));
-						destruct(into, value, fctx.clone(), &mut new_bindings)?;
-						let ctx = ctx.clone().extend_bindings(new_bindings).into_future(fctx);
-
-						evaluate_comp(ctx, &specs[1..], callback)?;
-					}
-				}
-				_ => bail!(InComprehensionCanOnlyIterateOverArray),
 			}
-		}
+			#[cfg(feature = "exp-object-iteration")]
+			Val::Obj(obj) => {
+				for field in obj.fields() {
+					let fctx = Pending::new();
+					let mut new_bindings = FxHashMap::with_capacity(into.binds_len());
+					let obj = obj.clone();
+					let value = Thunk::evaluated(Val::Arr(ArrValue::lazy(vec![
+						Thunk::evaluated(Val::string(field.clone())),
+						Thunk!(move || obj.get(field).transpose().expect(
+							"field exists, as field name was obtained from object.fields()",
+						)),
+					])));
+					destruct(into, value, fctx.clone(), &mut new_bindings)?;
+					let ctx = ctx.clone().extend_bindings(new_bindings).into_future(fctx);
+
+					evaluate_comp(ctx, &specs[1..], callback)?;
+				}
+			}
+			_ => bail!(InComprehensionCanOnlyIterateOverArray),
+		},
 	}
 	Ok(())
 }

@@ -1,7 +1,7 @@
 use jrsonnet_evaluator::{
-	Error, Result, Thunk, Val,
 	function::{CallLocation, FuncVal, PreparedFuncVal},
 	typed::{ComplexValType, FromUntyped, Typed, ValType},
+	Error, Result, Thunk, Val,
 };
 
 #[derive(Default, Clone)]

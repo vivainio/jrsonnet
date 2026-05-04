@@ -1,7 +1,7 @@
 use std::{any::Any, cell::RefCell, future::Future, rc::Rc};
 
 use jrsonnet_gcmodule::Acyclic;
-use jrsonnet_ir::{IStr, Source, SourcePath, visit::Visitor};
+use jrsonnet_ir::{visit::Visitor, IStr, Source, SourcePath};
 use rustc_hash::FxHashMap;
 
 use crate::{AsPathLike, FileData, ImportResolver, ResolvePathOwned, State};

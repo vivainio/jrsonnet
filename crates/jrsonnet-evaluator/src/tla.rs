@@ -5,9 +5,8 @@ use jrsonnet_interner::IStr;
 use jrsonnet_ir::{SourceFifo, SourcePath};
 
 use crate::{
-	Result, Thunk, Val,
 	function::{CallLocation, PreparedFuncVal},
-	in_description_frame, with_state,
+	in_description_frame, with_state, Result, Thunk, Val,
 };
 
 #[derive(Clone, Trace)]

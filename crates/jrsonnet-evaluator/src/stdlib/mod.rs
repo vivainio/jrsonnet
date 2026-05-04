@@ -3,7 +3,7 @@
 
 use format::{format_arr, format_obj};
 
-use crate::{Result, Val, function::CallLocation, in_frame};
+use crate::{function::CallLocation, in_frame, Result, Val};
 
 pub mod format;
 

@@ -54,15 +54,15 @@ impl ManifestOpts {
 			};
 			match format {
 				ManifestFormatName::String => Box::new(ToStringFormat),
-				ManifestFormatName::Json => Box::new(JsonFormat::cli(
-					self.line_padding.unwrap_or(3),
-				)),
-				ManifestFormatName::Yaml => Box::new(YamlFormat::cli(
-					self.line_padding.unwrap_or(2),
-				)),
-				ManifestFormatName::Toml => Box::new(TomlFormat::cli(
-					self.line_padding.unwrap_or(2),
-				)),
+				ManifestFormatName::Json => {
+					Box::new(JsonFormat::cli(self.line_padding.unwrap_or(3)))
+				}
+				ManifestFormatName::Yaml => {
+					Box::new(YamlFormat::cli(self.line_padding.unwrap_or(2)))
+				}
+				ManifestFormatName::Toml => {
+					Box::new(TomlFormat::cli(self.line_padding.unwrap_or(2)))
+				}
 				ManifestFormatName::XmlJsonml => Box::new(XmlJsonmlFormat::cli()),
 				ManifestFormatName::Ini => Box::new(IniFormat::cli()),
 			}

@@ -1,6 +1,7 @@
 use jrsonnet_evaluator::{
-	Result, Val, bail,
-	manifest::{ManifestFormat, ToStringFormat, escape_string_json_buf},
+	bail,
+	manifest::{escape_string_json_buf, ManifestFormat, ToStringFormat},
+	Result, Val,
 };
 
 pub struct PythonFormat;

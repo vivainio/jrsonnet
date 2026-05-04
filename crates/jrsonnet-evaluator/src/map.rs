@@ -2,7 +2,7 @@ use jrsonnet_gcmodule::{Cc, Trace};
 use jrsonnet_interner::IStr;
 use rustc_hash::FxHashMap;
 
-use crate::{Thunk, Val, gc::WithCapacityExt as _};
+use crate::{gc::WithCapacityExt as _, Thunk, Val};
 
 #[derive(Trace, Debug)]
 #[trace(tracking(force))]

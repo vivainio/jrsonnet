@@ -11,7 +11,7 @@ use std::{
 };
 
 use educe::Educe;
-use jrsonnet_gcmodule::{Acyclic, Cc, Trace, Weak, cc_dyn};
+use jrsonnet_gcmodule::{cc_dyn, Acyclic, Cc, Trace, Weak};
 use jrsonnet_interner::IStr;
 use jrsonnet_ir::Span;
 use rustc_hash::{FxHashMap, FxHashSet};
@@ -22,13 +22,13 @@ pub use jrsonnet_ir::Visibility;
 pub use oop::ObjValueBuilder;
 
 use crate::{
-	CcUnbound, MaybeUnbound, Result, Thunk, Unbound, Val,
 	arr::{PickObjectKeyValues, PickObjectValues},
 	bail,
-	error::{ErrorKind::*, suggest_object_fields},
+	error::{suggest_object_fields, ErrorKind::*},
 	identity_hash,
 	operator::evaluate_add_op,
 	val::{ArrValue, ThunkValue},
+	CcUnbound, MaybeUnbound, Result, Thunk, Unbound, Val,
 };
 
 /// Global setting for preserve-order behavior, set via CLI `--preserve-order`.
@@ -866,10 +866,7 @@ impl ObjValue {
 
 		out
 	}
-	pub fn fields_ex(
-		&self,
-		include_hidden: bool,
-	) -> Vec<IStr> {
+	pub fn fields_ex(&self, include_hidden: bool) -> Vec<IStr> {
 		if preserve_order() {
 			let (mut fields, mut keys): (Vec<_>, Vec<_>) = self
 				.fields_visibility()
@@ -909,10 +906,7 @@ impl ObjValue {
 	pub fn fields(&self) -> Vec<IStr> {
 		self.fields_ex(false)
 	}
-	pub fn values_ex(
-		&self,
-		include_hidden: bool,
-	) -> ArrValue {
+	pub fn values_ex(&self, include_hidden: bool) -> ArrValue {
 		ArrValue::new(PickObjectValues::new(
 			self.clone(),
 			self.fields_ex(include_hidden),
@@ -921,10 +915,7 @@ impl ObjValue {
 	pub fn values(&self) -> ArrValue {
 		self.values_ex(false)
 	}
-	pub fn key_values_ex(
-		&self,
-		include_hidden: bool,
-	) -> ArrValue {
+	pub fn key_values_ex(&self, include_hidden: bool) -> ArrValue {
 		ArrValue::new(PickObjectKeyValues::new(
 			self.clone(),
 			self.fields_ex(include_hidden),

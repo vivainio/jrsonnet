@@ -9,17 +9,17 @@ use jrsonnet_ir::IStr;
 use rustc_hash::{FxHashMap, FxHashSet};
 
 use super::{
+	ordering::{FieldIndex, SuperDepth},
 	CcObjectAssertion, CcObjectCore, EnumFields, EnumFieldsHandler, FieldVisibility, GetFor,
 	HasFieldIncludeHidden, ObjMember, ObjMemberBuilder, ObjValue, ObjValueInner, ObjectAssertion,
 	ObjectCore, OmitFieldsCore, SupThis,
-	ordering::{FieldIndex, SuperDepth},
 };
 use crate::{
-	CcUnbound, MaybeUnbound, Result, Thunk, Unbound, Val, bail,
+	bail,
 	error::ErrorKind::*,
 	function::{CallLocation, FuncVal},
 	gc::WithCapacityExt as _,
-	in_frame,
+	in_frame, CcUnbound, MaybeUnbound, Result, Thunk, Unbound, Val,
 };
 
 #[allow(clippy::module_name_repetitions)]

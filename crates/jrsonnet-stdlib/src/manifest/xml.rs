@@ -1,8 +1,9 @@
 use jrsonnet_evaluator::{
-	Either, ObjValue, Result, ResultExt, Val, bail, in_description_frame,
+	bail, in_description_frame,
 	manifest::{ManifestFormat, ToStringFormat},
 	typed::{ComplexValType, Either2, FromUntyped, Typed, ValType},
 	val::ArrValue,
+	Either, ObjValue, Result, ResultExt, Val,
 };
 
 pub struct XmlJsonmlFormat {

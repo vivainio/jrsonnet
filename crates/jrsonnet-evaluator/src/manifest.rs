@@ -1,6 +1,6 @@
 use std::{borrow::Cow, fmt::Write, ptr};
 
-use crate::{Result, ResultExt, Val, bail, in_description_frame};
+use crate::{bail, in_description_frame, Result, ResultExt, Val};
 
 pub trait ManifestFormat {
 	fn manifest_buf(&self, val: Val, buf: &mut String) -> Result<()>;
@@ -93,11 +93,7 @@ impl<'s> JsonFormat<'s> {
 			debug_truncate_strings: None,
 		}
 	}
-	pub fn std_to_json(
-		padding: String,
-		newline: &'s str,
-		key_val_sep: &'s str,
-	) -> Self {
+	pub fn std_to_json(padding: String, newline: &'s str, key_val_sep: &'s str) -> Self {
 		Self {
 			padding: Cow::Owned(padding),
 			mtype: JsonFormatting::Std,
@@ -259,10 +255,7 @@ fn manifest_json_ex_buf(
 			cur_padding.push_str(&options.padding);
 
 			let mut had_fields = false;
-			for (i, (key, value)) in obj
-				.iter()
-				.enumerate()
-			{
+			for (i, (key, value)) in obj.iter().enumerate() {
 				had_fields = true;
 				let value = value.with_description(|| format!("field <{key}> evaluation"))?;
 

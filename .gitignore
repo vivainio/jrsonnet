@@ -13,3 +13,4 @@ cache
 jsonnet-cpp
 jsonnet-sjsonnet
 benchmarks
+.claude/

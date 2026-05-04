@@ -2,10 +2,10 @@ use std::rc::Rc;
 
 use jrsonnet_gcmodule::Acyclic;
 use jrsonnet_ir::{
-	ArgsDesc, AssertExpr, AssertStmt, BinaryOp, BindSpec, CompSpec, Destruct, DestructRest, Expr,
-	ExprParam, ExprParams, FieldMember, FieldName, ForSpecData, IStr, IfElse, IfSpecData,
-	ImportKind, IndexPart, LiteralType, Member, ObjBody, ObjComp, ObjMembers, Slice, SliceDesc,
-	Source, Span, Spanned, Visibility, unescape,
+	unescape, ArgsDesc, AssertExpr, AssertStmt, BinaryOp, BindSpec, CompSpec, Destruct,
+	DestructRest, Expr, ExprParam, ExprParams, FieldMember, FieldName, ForSpecData, IStr, IfElse,
+	IfSpecData, ImportKind, IndexPart, LiteralType, Member, ObjBody, ObjComp, ObjMembers, Slice,
+	SliceDesc, Source, Span, Spanned, Visibility,
 };
 use peg::parser;
 
@@ -430,7 +430,7 @@ mod tests {
 	use insta::{assert_snapshot, glob};
 	use jrsonnet_ir::{IStr, Source};
 
-	use crate::{ParserSettings, parse};
+	use crate::{parse, ParserSettings};
 
 	#[test]
 	fn snapshots() {

@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
 
 use jrsonnet_evaluator::{
-	Result, Val, function::builtin, operator::evaluate_compare_op, val::ArrValue,
+	function::builtin, operator::evaluate_compare_op, val::ArrValue, Result, Val,
 };
 
 #[builtin]

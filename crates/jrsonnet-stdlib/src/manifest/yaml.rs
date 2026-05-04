@@ -1,8 +1,9 @@
 use std::{borrow::Cow, fmt::Write};
 
 use jrsonnet_evaluator::{
-	Result, ResultExt, Val, bail, in_description_frame,
-	manifest::{ManifestFormat, escape_string_json_buf},
+	bail, in_description_frame,
+	manifest::{escape_string_json_buf, ManifestFormat},
+	Result, ResultExt, Val,
 };
 
 pub struct YamlFormat<'s> {
@@ -39,10 +40,7 @@ impl YamlFormat<'_> {
 			quote_values: false,
 		}
 	}
-	pub fn std_to_yaml(
-		indent_array_in_object: bool,
-		quote_keys: bool,
-	) -> Self {
+	pub fn std_to_yaml(indent_array_in_object: bool, quote_keys: bool) -> Self {
 		Self {
 			padding: Cow::Borrowed("  "),
 			arr_element_padding: Cow::Borrowed(if indent_array_in_object { "  " } else { "" }),
@@ -242,10 +240,7 @@ fn manifest_yaml_ex_buf(
 		}
 		Val::Obj(o) => {
 			let mut had_fields = false;
-			for (i, (key, value)) in o
-				.iter()
-				.enumerate()
-			{
+			for (i, (key, value)) in o.iter().enumerate() {
 				had_fields = true;
 				let value = value.with_description(|| format!("field <{key}> evaluation"))?;
 				if i != 0 {

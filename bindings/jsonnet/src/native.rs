@@ -1,13 +1,13 @@
 use std::{
-	ffi::{CStr, c_void},
+	ffi::{c_void, CStr},
 	os::raw::{c_char, c_int},
 };
 
 use jrsonnet_evaluator::{
-	IStr, Val,
 	error::{Error, ErrorKind},
 	function::builtin::{NativeCallback, NativeCallbackHandler},
 	typed::FromUntyped as _,
+	IStr, Val,
 };
 
 use crate::VM;

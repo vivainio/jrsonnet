@@ -1,5 +1,5 @@
 use std::{
-	fs::{File, create_dir_all},
+	fs::{create_dir_all, File},
 	io::{Read, Write},
 };
 
@@ -7,8 +7,9 @@ use clap::{CommandFactory, Parser};
 use clap_complete::Shell;
 use jrsonnet_cli::{GcOpts, ManifestOpts, MiscOpts, OutputOpts, StdOpts, TlaOpts, TraceOpts};
 use jrsonnet_evaluator::{
-	ResultExt, State, Val, apply_tla, bail,
+	apply_tla, bail,
 	error::{Error as JrError, ErrorKind},
+	ResultExt, State, Val,
 };
 use jrsonnet_ir::{SourceDefaultIgnoreJpath, SourcePath};
 

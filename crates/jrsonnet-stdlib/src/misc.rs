@@ -1,12 +1,13 @@
 use std::{cell::RefCell, collections::BTreeSet};
 
 use jrsonnet_evaluator::{
-	Either, IStr, ObjValue, ObjValueBuilder, ResultExt, Thunk, Val, bail,
+	bail,
 	error::{ErrorKind::*, Result},
-	function::{CallLocation, FuncVal, builtin},
+	function::{builtin, CallLocation, FuncVal},
 	manifest::JsonFormat,
 	typed::{Either2, Either4},
-	val::{ArrValue, equals},
+	val::{equals, ArrValue},
+	Either, IStr, ObjValue, ObjValueBuilder, ResultExt, Thunk, Val,
 };
 use jrsonnet_gcmodule::Cc;
 
@@ -146,11 +147,7 @@ pub fn builtin_assert_equal(a: Val, b: Val) -> Result<bool> {
 		return Ok(true);
 	}
 	// TODO: Use debug output format
-	let format = JsonFormat::std_to_json(
-		"  ".to_owned(),
-		"\n",
-		": ",
-	);
+	let format = JsonFormat::std_to_json("  ".to_owned(), "\n", ": ");
 	let a = if let Some(a) = a.as_str() {
 		format!("<A>\n{a}\n</A>")
 	} else {
@@ -170,14 +167,8 @@ pub fn builtin_merge_patch(target: Val, patch: Val) -> Result<Val> {
 		return Ok(patch);
 	};
 	let target = target.as_obj().unwrap_or_else(ObjValue::empty);
-	let target_fields = target
-		.fields()
-		.into_iter()
-		.collect::<BTreeSet<IStr>>();
-	let patch_fields = patch
-		.fields()
-		.into_iter()
-		.collect::<BTreeSet<IStr>>();
+	let target_fields = target.fields().into_iter().collect::<BTreeSet<IStr>>();
+	let patch_fields = patch.fields().into_iter().collect::<BTreeSet<IStr>>();
 
 	let mut out = ObjValueBuilder::new();
 	for field in target_fields.union(&patch_fields) {

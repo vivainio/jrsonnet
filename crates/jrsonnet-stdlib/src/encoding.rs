@@ -1,9 +1,10 @@
-use base64::{Engine, engine::general_purpose::STANDARD};
+use base64::{engine::general_purpose::STANDARD, Engine};
 use jrsonnet_evaluator::{
-	IBytes, IStr, Result, bail,
+	bail,
 	function::builtin,
 	runtime_error,
 	typed::{Either, Either2},
+	IBytes, IStr, Result,
 };
 
 #[builtin]

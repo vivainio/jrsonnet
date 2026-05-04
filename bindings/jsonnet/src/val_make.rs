@@ -6,8 +6,8 @@ use std::{
 };
 
 use jrsonnet_evaluator::{
-	ObjValue, Val,
 	val::{ArrValue, NumValue},
+	ObjValue, Val,
 };
 
 use crate::VM;

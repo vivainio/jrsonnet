@@ -12,9 +12,10 @@ use jrsonnet_types::ValType;
 use thiserror::Error;
 
 use crate::{
-	Error, ObjValue, Result, Val, bail,
-	error::{ErrorKind::*, format_found, suggest_object_fields},
+	bail,
+	error::{format_found, suggest_object_fields, ErrorKind::*},
 	typed::FromUntyped,
+	Error, ObjValue, Result, Val,
 };
 
 #[derive(Debug, Clone, Error, Trace)]

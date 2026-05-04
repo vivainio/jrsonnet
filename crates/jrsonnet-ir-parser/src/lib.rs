@@ -2,12 +2,12 @@ use std::rc::Rc;
 
 use jrsonnet_gcmodule::Acyclic;
 use jrsonnet_ir::{
-	ArgsDesc, AssertExpr, AssertStmt, BinaryOp, BinaryOpType, BindSpec, CompSpec, Destruct, Expr,
-	ExprParam, ExprParams, FieldMember, FieldName, ForSpecData, IStr, IfElse, IfSpecData,
-	ImportKind, IndexPart, LiteralType, Member, ObjBody, ObjComp, ObjMembers, Slice, SliceDesc,
-	Source, Span, Spanned, UnaryOpType, Visibility, unescape,
+	unescape, ArgsDesc, AssertExpr, AssertStmt, BinaryOp, BinaryOpType, BindSpec, CompSpec,
+	Destruct, Expr, ExprParam, ExprParams, FieldMember, FieldName, ForSpecData, IStr, IfElse,
+	IfSpecData, ImportKind, IndexPart, LiteralType, Member, ObjBody, ObjComp, ObjMembers, Slice,
+	SliceDesc, Source, Span, Spanned, UnaryOpType, Visibility,
 };
-use jrsonnet_lexer::{Lexeme, Lexer, Span as LexSpan, SyntaxKind, T, collect_lexed_str_block};
+use jrsonnet_lexer::{collect_lexed_str_block, Lexeme, Lexer, Span as LexSpan, SyntaxKind, T};
 
 pub struct ParserSettings {
 	pub source: Source,

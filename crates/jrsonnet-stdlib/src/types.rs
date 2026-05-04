@@ -1,4 +1,4 @@
-use jrsonnet_evaluator::{IStr, Val, function::builtin};
+use jrsonnet_evaluator::{function::builtin, IStr, Val};
 
 #[builtin]
 pub fn builtin_type(x: Val) -> IStr {

@@ -5,15 +5,16 @@ use std::{
 	cell::RefCell,
 	collections::HashMap,
 	env::current_dir,
-	ffi::{CStr, CString, c_void},
+	ffi::{c_void, CStr, CString},
 	os::raw::{c_char, c_int},
 	path::PathBuf,
 	ptr::null_mut,
 };
 
 use jrsonnet_evaluator::{
-	AsPathLike, ImportResolver, ResolvePath, bail,
+	bail,
 	error::{ErrorKind::*, Result},
+	AsPathLike, ImportResolver, ResolvePath,
 };
 use jrsonnet_gcmodule::Acyclic;
 use jrsonnet_ir::{SourceDirectory, SourceFile, SourcePath};

@@ -3,11 +3,10 @@ use std::{collections::HashMap, hash::BuildHasher};
 use jrsonnet_interner::IStr;
 use jrsonnet_ir::{BindSpec, Destruct};
 
-use crate::evaluate;
 use crate::{
-	Context, Pending, Thunk, Val, bail,
+	bail,
 	error::{ErrorKind::*, Result},
-	evaluate_method, evaluate_named_param,
+	evaluate, evaluate_method, evaluate_named_param, Context, Pending, Thunk, Val,
 };
 
 #[allow(clippy::too_many_lines)]

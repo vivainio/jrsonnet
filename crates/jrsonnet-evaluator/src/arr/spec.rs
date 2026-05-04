@@ -6,12 +6,12 @@ use jrsonnet_ir::Expr;
 
 use super::ArrValue;
 use crate::{
-	Context, Error, ObjValue, Result, Thunk, Val,
 	error::ErrorKind::InfiniteRecursionDetected,
 	evaluate,
 	function::NativeFn,
 	typed::{IntoUntyped, Typed},
 	val::ThunkValue,
+	Context, Error, ObjValue, Result, Thunk, Val,
 };
 
 pub trait ArrayLike: Any + Trace + Debug {

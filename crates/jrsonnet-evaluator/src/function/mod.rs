@@ -9,11 +9,11 @@ pub use jrsonnet_macros::builtin;
 use self::{
 	builtin::{Builtin, StaticBuiltin},
 	parse::{parse_builtin_call, parse_default_function_call, parse_function_call},
-	prepared::{PreparedCall, parse_prepared_builtin_call, parse_prepared_function_call},
+	prepared::{parse_prepared_builtin_call, parse_prepared_function_call, PreparedCall},
 };
 use crate::{
-	Context, Result, Thunk, Val, bail, error::ErrorKind::*, evaluate, evaluate_trivial,
-	function::builtin::BuiltinFunc,
+	bail, error::ErrorKind::*, evaluate, evaluate_trivial, function::builtin::BuiltinFunc, Context,
+	Result, Thunk, Val,
 };
 
 pub mod builtin;

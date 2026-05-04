@@ -1,11 +1,12 @@
 #![allow(non_snake_case)]
 
 use jrsonnet_evaluator::{
-	Either, IStr, ObjValue, ObjValueBuilder, Result, ResultExt, Thunk, Val, bail,
-	function::{FuncVal, NativeFn, builtin},
+	bail,
+	function::{builtin, FuncVal, NativeFn},
 	runtime_error,
 	typed::{BoundedI32, BoundedUsize, Either2, FromUntyped},
-	val::{ArrValue, IndexableVal, equals},
+	val::{equals, ArrValue, IndexableVal},
+	Either, IStr, ObjValue, ObjValueBuilder, Result, ResultExt, Thunk, Val,
 };
 
 pub fn eval_on_empty(on_empty: Option<Thunk<Val>>) -> Result<Val> {
@@ -430,9 +431,7 @@ pub fn builtin_flatten_deep_array(value: Val) -> Result<Vec<Val>> {
 }
 
 #[builtin]
-pub fn builtin_prune(
-	a: Val,
-) -> Result<Val> {
+pub fn builtin_prune(a: Val) -> Result<Val> {
 	fn is_content(val: &Val) -> bool {
 		match val {
 			Val::Null => false,

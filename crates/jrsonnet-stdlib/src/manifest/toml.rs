@@ -1,9 +1,10 @@
 use std::borrow::Cow;
 
 use jrsonnet_evaluator::{
-	IStr, ObjValue, Result, ResultExt, Val, bail, in_description_frame,
-	manifest::{ManifestFormat, escape_string_json_buf},
+	bail, in_description_frame,
+	manifest::{escape_string_json_buf, ManifestFormat},
 	val::ArrValue,
+	IStr, ObjValue, Result, ResultExt, Val,
 };
 
 pub struct TomlFormat<'s> {
@@ -129,10 +130,7 @@ fn manifest_value(
 			buf.push('{');
 
 			let mut had_fields = false;
-			for (i, (k, v)) in o
-				.iter()
-				.enumerate()
-			{
+			for (i, (k, v)) in o.iter().enumerate() {
 				had_fields = true;
 				let v = v.with_description(|| format!("field <{k}> evaluation"))?;
 

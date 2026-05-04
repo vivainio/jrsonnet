@@ -1,17 +1,18 @@
 use std::rc::Rc;
 
 use jrsonnet_ir::{
-	ArgsDesc, Expr, ExprParams,
 	function::{FunctionSignature, ParamName},
+	ArgsDesc, Expr, ExprParams,
 };
 use rustc_hash::FxHashMap;
 
 use crate::{
-	Context, Pending, Thunk, Val, bail,
+	bail,
 	destructure::destruct,
 	error::{ErrorKind::*, Result},
 	evaluate, evaluate_named_param,
 	gc::WithCapacityExt as _,
+	Context, Pending, Thunk, Val,
 };
 
 fn eval_arg(ctx: Context, arg: &Rc<Expr>, tailstrict: bool) -> Result<Thunk<Val>> {
